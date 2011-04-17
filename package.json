@@ -1,0 +1,20 @@
+{
+    "name": "armory",
+    "version": "0.1.0",
+    "description": "A simple wrapper for the WoW Armory API.",
+    "keywords": ["wow", "warcraft", "armory"],
+    "author": "Christian Wesselhoeft <christian@cwesselhoeft.com>",
+    "main": "./lib/armory",
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/xtian/node-armory.git"
+    },
+    "dependencies": {
+        "request": ">=1.9.5"
+    },
+    "devDependencies": {
+        "nodeunit": ">=0.5.1",
+        "jshint": ">=0.2.0"
+    },
+    "engines": ["node >= 0.4.0"]
+}
