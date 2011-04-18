@@ -12,7 +12,7 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's REST
 
 * `realmStatus`
  * `realms` _(optional)_: String or array containing realm name(s). Defaults to `''` which returns all realms.
- * `region` _(optional)_: two-letter string containing region code. Defaults to `'us'`.
+ * `region` _(optional)_: two-letter string containing region code. Defaults to `'us'`, but can be set through the defaultregion property (i.e., `armory.defaultregion = 'eu';`).
  * `callback(error, response)`
 
 ## Usage
