@@ -5,7 +5,7 @@ var assert = require('assert'),
 module.exports = {
     
     'test: all US realms': function(test) {
-        armory.realmStatus(function(res) {
+        armory.realmStatus(function(err, res) {
            test.ok(Array.isArray(res));
            test.equal(res[0].slug, 'aegwynn');
            test.done();
@@ -13,7 +13,7 @@ module.exports = {
     },
     
     'test: all EU realms': function(test) {
-        armory.realmStatus('eu', function(res) {
+        armory.realmStatus('eu', function(err, res) {
             test.ok(Array.isArray(res));
             test.equal(res[0].slug, 'aegwynn');
             test.done();
@@ -21,7 +21,7 @@ module.exports = {
     },
     
     'test: single US realm': function(test) {
-        armory.realmStatus('Shadowmoon', function(res) {
+        armory.realmStatus('Shadowmoon', function(err, res) {
             test.ok(Array.isArray(res));
             test.equal(res[0].slug, 'shadowmoon');
             test.done();
@@ -29,7 +29,7 @@ module.exports = {
     },
     
     'test: single EU realm': function(test) {
-        armory.realmStatus('Earthen Ring', 'eu', function(res) {
+        armory.realmStatus('Earthen Ring', 'eu', function(err, res) {
             test.ok(Array.isArray(res));
             test.equal(res[0].slug, 'earthen-ring');
             test.done();
@@ -37,7 +37,7 @@ module.exports = {
     },
     
     'test: multiple US realms': function(test) {
-        armory.realmStatus(['Earthen Ring', 'Shadowmoon'], function(res) {
+        armory.realmStatus(['Earthen Ring', 'Shadowmoon'], function(err, res) {
             test.ok(Array.isArray(res));
             test.equal(res[0].slug, 'shadowmoon');
             test.equal(res[1].slug, 'earthen-ring');
@@ -46,7 +46,7 @@ module.exports = {
     },
     
     'test: multiple EU realms': function(test) {
-        armory.realmStatus(['Earthen Ring', 'Tarren Mill'], 'eu', function(res) {
+        armory.realmStatus(['Earthen Ring', 'Tarren Mill'], 'eu', function(err, res) {
             test.ok(Array.isArray(res));
             test.equal(res[0].slug, 'tarren-mill');
             test.equal(res[1].slug, 'earthen-ring');
@@ -55,9 +55,8 @@ module.exports = {
     },
     
     'test: non-existent realm': function(test) {
-        armory.realmStatus('foo', function(res) {
-            test.equal(res.status, 'nok');
-            test.equal(res.reason, 'Invalid realm list');
+        armory.realmStatus('foo', function(err, res) {
+            test.equal(err.message, 'Invalid realm list');
             test.done();
         });
     }   

@@ -13,7 +13,7 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's REST
 * `realmStatus`
  * `realms` _(optional)_: String or array containing realm name(s). Defaults to `''` which returns all realms.
  * `region` _(optional)_: two-letter string containing region code. Defaults to `'us'`.
- * `callback`
+ * `callback(error, response)`
 
 ## Usage
 
@@ -21,7 +21,7 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's REST
  var armory = require('armory');
  
  // All realms
- armory.realmStatus(function(res) {
+ armory.realmStatus(function(err, res) {
    var realms = {};
    
    for (var i = res.length; i--;) {
@@ -30,7 +30,7 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's REST
  });
  
  // Specific realms
- armory.realmStatus(['Shadowmoon', 'Nazgrel'], function(res) {
+ armory.realmStatus(['Shadowmoon', 'Nazgrel'], function(err, res) {
    
  });
 </pre>
