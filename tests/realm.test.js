@@ -1,63 +1,95 @@
-var assert = require('assert'),
-    armory = require('../lib/armory');
-    
-    
+var armory = require('../lib/armory');
+
 module.exports = {
-    
-    'test: all US realms': function(test) {
+
+    'all US realms': function(test) {
         armory.realmStatus(function(err, res) {
-           test.ok(Array.isArray(res));
-           test.equal(res[0].slug, 'aegwynn');
-           test.done();
+            test.ifError(err);
+            test.ok(Array.isArray(res));
+            test.ok(res.length > 1);
+            test.ok(res[0].slug);
+
+            test.done();
         });
     },
-    
-    'test: all EU realms': function(test) {
+
+    'all EU realms': function(test) {
         armory.realmStatus('eu', function(err, res) {
+            test.ifError(err);
             test.ok(Array.isArray(res));
-            test.equal(res[0].slug, 'aegwynn');
+            test.ok(res.length > 1);
+            test.ok(res[0].slug);
+
             test.done();
         });
     },
-    
-    'test: single US realm': function(test) {
+
+    'single US realm': function(test) {
         armory.realmStatus('Shadowmoon', function(err, res) {
+            test.ifError(err);
             test.ok(Array.isArray(res));
-            test.equal(res[0].slug, 'shadowmoon');
+
+            res = res[0];
+            test.equal(res.name, 'Shadowmoon');
+            test.equal(res.slug, 'shadowmoon');
+
             test.done();
         });
     },
-    
-    'test: single EU realm': function(test) {
-        armory.realmStatus('Earthen Ring', 'eu', function(err, res) {
+
+    'single EU realm': function(test) {
+        armory.realmStatus('Свежеватель Душ', 'eu', function(err, res) {
+            test.ifError(err);
             test.ok(Array.isArray(res));
-            test.equal(res[0].slug, 'earthen-ring');
+
+            res = res[0];
+            test.equal(res.name, 'Свежеватель Душ');
+            test.equal(res.slug, 'свежеватель-душ');
+
             test.done();
         });
     },
-    
-    'test: multiple US realms': function(test) {
+
+    'multiple US realms': function(test) {
         armory.realmStatus(['Earthen Ring', 'Shadowmoon'], function(err, res) {
+            test.ifError(err);
             test.ok(Array.isArray(res));
-            test.equal(res[0].slug, 'shadowmoon');
-            test.equal(res[1].slug, 'earthen-ring');
+            test.equal(res.length, 2);
+
+            test.equal(res[0].name, 'Earthen Ring');
+            test.equal(res[0].slug, 'earthen-ring');
+            test.equal(res[1].name, 'Shadowmoon');
+            test.equal(res[1].slug, 'shadowmoon');
+
             test.done();
         });
     },
-    
-    'test: multiple EU realms': function(test) {
-        armory.realmStatus(['Earthen Ring', 'Tarren Mill'], 'eu', function(err, res) {
-            test.ok(Array.isArray(res));
-            test.equal(res[0].slug, 'tarren-mill');
-            test.equal(res[1].slug, 'earthen-ring');
-            test.done();
+
+    'multiple EU realms': function(test) {
+        armory.realmStatus(
+            ['Свежеватель Душ', 'Tarren Mill'],
+            'eu',
+            function(err, res) {
+
+                test.ifError(err);
+                test.ok(Array.isArray(res));
+                test.equal(res.length, 2);
+
+                test.equal(res[0].name, 'Свежеватель Душ');
+                test.equal(res[0].slug, 'свежеватель-душ');
+                test.equal(res[1].name, 'Tarren Mill');
+                test.equal(res[1].slug, 'tarren-mill');
+
+                test.done();
         });
     },
-    
-    'test: non-existent realm': function(test) {
+
+    'non-existent realm': function(test) {
         armory.realmStatus('foo', function(err, res) {
-            test.equal(err.message, 'Invalid realm list');
+            test.ifError(err);
+            test.ok(res.length > 1);
+
             test.done();
         });
-    }   
+    }
 };
