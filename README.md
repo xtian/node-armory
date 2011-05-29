@@ -8,12 +8,18 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's REST
   npm install armory
 </pre>
 
-## Supported Methods
+## Documentation
+
+### Methods
 
 * `realmStatus`
- * `realms` _(optional)_: String or array containing realm name(s). Defaults to `''` which returns all realms.
- * `region` _(optional)_: two-letter string containing region code. Defaults to `'us'`, but can be set through the defaultregion property (i.e., `armory.defaultregion = 'eu';`).
+ * `realms` _(optional)_: String or array containing realm name(s). All realms returned if empty.
+ * `region` _(optional)_: Two-letter string containing region code. Uses defaultRegion property if empty.
  * `callback(error, response)`
+ 
+### Properties
+
+* `defaultRegion`: Sets battle.net sub-domain to request. Defaults to `'us'`.
 
 ## Usage
 
