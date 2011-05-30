@@ -51,15 +51,15 @@ module.exports = {
     },
 
     'multiple US realms': function(test) {
-        armory.realmStatus(['Earthen Ring', 'Shadowmoon'], function(err, res) {
+        armory.realmStatus(['Cho\'gall', 'Shadowmoon'], function(err, res) {
             test.ifError(err);
             test.ok(Array.isArray(res));
             test.equal(res.length, 2);
 
-            test.equal(res[0].name, 'Earthen Ring');
-            test.equal(res[0].slug, 'earthen-ring');
-            test.equal(res[1].name, 'Shadowmoon');
-            test.equal(res[1].slug, 'shadowmoon');
+            test.equal(res[0].name, 'Shadowmoon');
+            test.equal(res[0].slug, 'shadowmoon');
+            test.equal(res[1].name, 'Cho\'gall');
+            test.equal(res[1].slug, 'chogall');
 
             test.done();
         });
@@ -67,7 +67,7 @@ module.exports = {
 
     'multiple EU realms': function(test) {
         armory.realmStatus(
-            ['Свежеватель Душ', 'Tarren Mill'],
+            ['Свежеватель Душ', 'Festung der Stürme'],
             'eu',
             function(err, res) {
 
@@ -77,8 +77,8 @@ module.exports = {
 
                 test.equal(res[0].name, 'Свежеватель Душ');
                 test.equal(res[0].slug, 'свежеватель-душ');
-                test.equal(res[1].name, 'Tarren Mill');
-                test.equal(res[1].slug, 'tarren-mill');
+                test.equal(res[1].name, 'Festung der Stürme');
+                test.equal(res[1].slug, 'festung-der-sturme');
 
                 test.done();
         });
