@@ -39,6 +39,8 @@ module.exports = {
     'multiple characters': function(test) {
         var chars = [];
 
+        test.expect(9);
+
         armory.character({
             names: ['Dargonaut', 'Dewbaca', 'Therago_Nazgrel'],
             realm: 'Shadowmoon'
