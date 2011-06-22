@@ -11,6 +11,22 @@ module.exports = {
         });
     },
 
+    'request additional fields': function(test) {
+        armory.guild({
+            names: 'The Gentlemens Club_Shadowmoon',
+            fields: ['members', 'achievements']
+        }, function(err, res) {
+            test.ifError(err);
+            test.ok(res);
+            test.ok(Array.isArray(res.members));
+            test.ok(res.members.length);
+            test.ok(res.achievements);
+            test.ok(Array.isArray(res.achievements.criteria));
+            test.ok(res.achievements.criteria.length);
+            test.done();
+        });
+    },
+
     'multiple guilds': function(test) {
         var guilds = [];
 
