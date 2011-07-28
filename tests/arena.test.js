@@ -6,7 +6,7 @@ module.exports = {
         armory.arena('We bug you_3v3_Shadowmoon', function(err, res) {
             test.ifError(err);
             test.ok(res);
-            test.equal(res.name, 'IM ON A CAMEL');
+            test.equal(res.name, 'We bug you');
             test.done();
         });
     },
