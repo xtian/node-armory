@@ -36,6 +36,21 @@ module.exports = {
         });
     },
 
+    'request additional fields with locale': function(test) {
+        armory.character({
+            names: 'Dargonaut_Shadowmoon',
+            fields: ['titles'],
+            locale: 'es_MX'
+        }, function(err, character) {
+            test.ifError(err);
+            test.ok(character);
+            test.ok(character.titles);
+            test.equal(character.titles[0].name,
+                '%s, Campeón de los baldíos helados');
+            test.done();
+        });
+    },
+
     'multiple characters': function(test) {
         var chars = [];
 

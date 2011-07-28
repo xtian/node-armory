@@ -72,5 +72,34 @@ module.exports = {
             test.ok(res.length);
             test.done();
         });
+    },
+
+    'region': function(test) {
+        armory.races('eu', function(err, res) {
+            test.ifError(err);
+            test.ok(Array.isArray(res));
+            test.ok(res.length);
+            test.done();
+        });
+    },
+
+    'locale': function(test) {
+        armory.races('es_MX', function(err, res) {
+            test.ifError(err);
+            test.ok(Array.isArray(res));
+            test.ok(res.length);
+            test.equal(res[0].name, 'Enano');
+            test.done();
+        });
+    },
+
+    'region and locale': function(test) {
+        armory.races('eu', 'de_DE', function(err, res) {
+            test.ifError(err);
+            test.ok(Array.isArray(res));
+            test.ok(res.length);
+            test.equal(res[1].name, 'Mensch');
+            test.done();
+        });
     }
 };
