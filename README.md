@@ -21,6 +21,7 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's [RES
  * `fields` _(optional)_: Array of optional fields to request.
  * `realm` _(optional)_: Realm name. Overridden if provided in name string.
  * `region` _(optional)_: Two-letter region code. Defaults to `defaultRegion`.
+ * `locale` _(optional)_: Locale string in the form xx_XX.
 * `callback(error, response)`: Called once for each character/guild requested.
   
 #### arena
@@ -30,15 +31,18 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's [RES
  * `fields` _(optional)_: Array of optional fields to request.
  * `realm` _(optional)_: Realm name. Overridden if provided in name string.
  * `region` _(optional)_: Two-letter region code. Defaults to `defaultRegion`.
+ * `locale` _(optional)_: Locale string in the form xx_XX.
 * `callback(error, response)`: Called once for each team requested.
 
 #### item
 * `id`: String, integer, or array containing item ID(s).
 * `region` _(optional)_: Two-letter region code. Defaults to `defaultRegion`.
+* `locale` _(optional)_: Locale string in the form xx_XX.
 * `callback(error, response)`: Called once for each item requested.
   
 #### perks, rewards, classes, races
 * `region` _(optional)_: Two-letter region code. Defaults to `defaultRegion`.
+* `locale` _(optional)_: Locale string in the form xx_XX.
 * `callback(error, response)`
  
 ### Properties
