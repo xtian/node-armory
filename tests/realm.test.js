@@ -56,10 +56,10 @@ module.exports = {
             test.ok(Array.isArray(res));
             test.equal(res.length, 2);
 
-            test.equal(res[0].name, 'Cho\'gall');
-            test.equal(res[0].slug, 'chogall');
-            test.equal(res[1].name, 'Shadowmoon');
-            test.equal(res[1].slug, 'shadowmoon');
+            test.equal(res[0].name, 'Shadowmoon');
+            test.equal(res[0].slug, 'shadowmoon');
+            test.equal(res[1].name, 'Cho\'gall');
+            test.equal(res[1].slug, 'chogall');
 
             test.done();
         });
@@ -75,10 +75,10 @@ module.exports = {
                 test.ok(Array.isArray(res));
                 test.equal(res.length, 2);
 
-                test.equal(res[0].name, 'Festung der Stürme');
-                test.equal(res[0].slug, 'festung-der-sturme');
-                test.equal(res[1].name, 'Свежеватель Душ');
-                test.equal(res[1].slug, 'свежеватель-душ');
+                test.equal(res[0].name, 'Свежеватель Душ');
+                test.equal(res[0].slug, 'свежеватель-душ');
+                test.equal(res[1].name, 'Festung der Stürme');
+                test.equal(res[1].slug, 'festung-der-sturme');
 
                 test.done();
         });

@@ -3,7 +3,7 @@ var armory = require('../lib/armory');
 module.exports = {
 
     'single team': function(test) {
-        armory.arena('IM ON A CAMEL_2v2_Shadowmoon', function(err, res) {
+        armory.arena('We bug you_3v3_Shadowmoon', function(err, res) {
             test.ifError(err);
             test.ok(res);
             test.equal(res.name, 'IM ON A CAMEL');
@@ -14,22 +14,21 @@ module.exports = {
     'multiple teams': function(test) {
         var teams = [];
 
-        test.expect(9);
+        test.expect(6);
 
         armory.arena({
-            names: ['fasdfasdf', 'Africa_3v3', 'umad_3v3_Earthen Ring'],
+            names: ['Staker cheated on his GF', 'We bug you_3v3'],
             realm: 'Shadowmoon',
-            size: '2v2'
+            size: '5v5'
         }, function(err, res) {
             test.ifError(err);
             test.ok(res);
 
             teams.push(res.name);
 
-            if (teams.length === 3) {
-                test.notEqual(teams.indexOf('fasdfasdf'), -1);
-                test.notEqual(teams.indexOf('Africa'), -1);
-                test.notEqual(teams.indexOf('umad'), -1);
+            if (teams.length === 2) {
+                test.notEqual(teams.indexOf('Staker cheated on his GF'), -1);
+                test.notEqual(teams.indexOf('We bug you'), -1);
                 test.done();
             }
         });
