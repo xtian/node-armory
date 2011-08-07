@@ -51,6 +51,27 @@ module.exports = {
         });
     },
 
+    'request character with lastModified': function(test) {
+        var options = {
+            names: 'Dargonaut',
+            realm: 'Shadowmoon'
+        };
+
+        armory.character(options, function(err, character) {
+            test.ifError(err);
+            test.ok(character);
+            test.ok(character.lastModified);
+
+            options.lastModified = character.lastModified;
+
+            armory.character(options, function(err, character) {
+                test.ifError(err);
+                test.equal(character, undefined);
+                test.done();
+            });
+        });
+    },
+
     'multiple characters': function(test) {
         var chars = [];
 

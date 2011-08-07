@@ -27,6 +27,27 @@ module.exports = {
         });
     },
 
+    'request guild with lastModified': function(test) {
+        var options = {
+            names: 'The Gentlemens Club',
+            realm: 'Shadowmoon'
+        };
+
+        armory.guild(options, function(err, guild) {
+            test.ifError(err);
+            test.ok(res);
+            test.ok(res.lastModified);
+
+            options.lastModified = res.lastModified;
+
+            armory(options, function(err, guild) {
+                test.ifError(err);
+                test.equal(guild, undefined);
+                test.done();
+            });
+        });
+    },
+
     'multiple guilds': function(test) {
         var guilds = [];
 
