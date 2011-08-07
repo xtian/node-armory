@@ -44,6 +44,15 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's [RES
 * `region` _(optional)_: Two-letter region code. Defaults to `defaultRegion`.
 * `locale` _(optional)_: Locale string in the form xx_XX.
 * `callback(error, response)`
+
+#### auction resources (step 1)
+* `realm`: String or array containing realm slug(s).
+* `region` _(optional)_: Two-letter region code. Defaults to `defaultRegion`.
+* `callback(error, response)`
+
+#### auction resources (step 2)
+* `uri`: String or the `'files'` object returned in step 1.
+* `callback(error, response)`
  
 ### Properties
 
@@ -83,3 +92,29 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's [RES
     armory.item([28275, 27903, 28041], function(err, item) {
       
     });
+
+	// Auctions dump info for a single realm
+	armory.auction('sentinels', function(err,data) {
+		
+	});
+	
+	// Auctions dump info for multiple realms
+	armory.auction(['sentinels','thrall'], function(err,data) { 
+		
+	});
+	
+	// Auctions data
+	armory.auctiondata("http://us.battle.net/auction-data/medivh/auctions.json", function (err, auctions) {
+	
+	});
+	
+    // Auctions dump and data for multiple realms (step 1 and 2 combined)
+	armory.auction(['sentinels','thrall'], function(err,data) { 
+	    if (err) { throw err; }
+	    
+		armory.auctiondata(data.files, function (err, auctions) {
+	        if (err) { throw err; }
+	        
+			/* Do something with the data */
+	    });
+	});
