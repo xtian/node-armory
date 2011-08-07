@@ -3,10 +3,10 @@ var armory = require('../lib/armory');
 module.exports = {
 
     'single team': function(test) {
-        armory.arena('We bug you_3v3_Shadowmoon', function(err, res) {
+        armory.arena('We bug you_3v3_Shadowmoon', function(err, team) {
             test.ifError(err);
-            test.ok(res);
-            test.equal(res.name, 'We bug you');
+            test.ok(team);
+            test.equal(team.name, 'We bug you');
             test.done();
         });
     },
@@ -20,11 +20,11 @@ module.exports = {
             names: ['Staker cheated on his GF', 'We bug you_3v3'],
             realm: 'Shadowmoon',
             size: '5v5'
-        }, function(err, res) {
+        }, function(err, team) {
             test.ifError(err);
-            test.ok(res);
+            test.ok(team);
 
-            teams.push(res.name);
+            teams.push(team.name);
 
             if (teams.length === 2) {
                 test.notEqual(teams.indexOf('Staker cheated on his GF'), -1);
@@ -35,14 +35,14 @@ module.exports = {
     },
 
     'non-existent team': function(test) {
-        armory.arena('foo_2v2_Shadowmoon', function(err, res) {
+        armory.arena('foo_2v2_Shadowmoon', function(err, team) {
             test.ok(err);
             test.done();
         });
     },
 
     'empty options': function(test) {
-        armory.arena({}, function(err, res) {
+        armory.arena({}, function(err, team) {
             test.ok(err);
             test.done();
         });

@@ -3,10 +3,10 @@ var armory = require('../lib/armory');
 module.exports = {
 
     'single guild': function(test) {
-        armory.guild('The Gentlemens Club_Shadowmoon', function(err, res) {
+        armory.guild('The Gentlemens Club_Shadowmoon', function(err, guild) {
             test.ifError(err);
-            test.ok(res);
-            test.equal(res.name, 'The Gentlemens Club');
+            test.ok(guild);
+            test.equal(guild.name, 'The Gentlemens Club');
             test.done();
         });
     },
@@ -15,14 +15,14 @@ module.exports = {
         armory.guild({
             names: 'The Gentlemens Club_Shadowmoon',
             fields: ['members', 'achievements']
-        }, function(err, res) {
+        }, function(err, guild) {
             test.ifError(err);
-            test.ok(res);
-            test.ok(Array.isArray(res.members));
-            test.ok(res.members.length);
-            test.ok(res.achievements);
-            test.ok(Array.isArray(res.achievements.criteria));
-            test.ok(res.achievements.criteria.length);
+            test.ok(guild);
+            test.ok(Array.isArray(guild.members));
+            test.ok(guild.members.length);
+            test.ok(guild.achievements);
+            test.ok(Array.isArray(guild.achievements.criteria));
+            test.ok(guild.achievements.criteria.length);
             test.done();
         });
     },
@@ -35,10 +35,10 @@ module.exports = {
 
         armory.guild(options, function(err, guild) {
             test.ifError(err);
-            test.ok(res);
-            test.ok(res.lastModified);
+            test.ok(guild);
+            test.ok(guild.lastModified);
 
-            options.lastModified = res.lastModified;
+            options.lastModified = guild.lastModified;
 
             armory(options, function(err, guild) {
                 test.ifError(err);
@@ -56,11 +56,11 @@ module.exports = {
         armory.guild({
             names: ['Superfly', 'Eternals', 'Horde Revelation_Nazgrel'],
             realm: 'Shadowmoon'
-        }, function(err, res) {
+        }, function(err, guild) {
             test.ifError(err);
-            test.ok(res);
+            test.ok(guild);
 
-            guilds.push(res.name);
+            guilds.push(guild.name);
 
             if (guilds.length === 3) {
                 test.notEqual(guilds.indexOf('Superfly'), -1);
@@ -72,14 +72,14 @@ module.exports = {
     },
 
     'non-existent guild': function(test) {
-        armory.guild('foo_Shadowmoon', function(err, res) {
+        armory.guild('foo_Shadowmoon', function(err, guild) {
             test.ok(err);
             test.done();
         });
     },
 
     'empty options': function(test) {
-        armory.guild({}, function(err, res) {
+        armory.guild({}, function(err, guild) {
             test.ok(err);
             test.done();
         });
