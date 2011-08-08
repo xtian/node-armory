@@ -40,7 +40,7 @@ module.exports = {
 
             options.lastModified = guild.lastModified;
 
-            armory(options, function(err, guild) {
+            armory.guild(options, function(err, guild) {
                 test.ifError(err);
                 test.equal(guild, undefined);
                 test.done();
