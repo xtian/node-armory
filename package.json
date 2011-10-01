@@ -4,7 +4,7 @@
     "description": "A simple wrapper for the WoW Armory API.",
     "keywords": ["wow", "warcraft", "armory"],
     "author": "Christian Wesselhoeft <christian@cwesselhoeft.com>",
-    "main": "./lib/armory",
+    "main": "index.js",
     "repository": {
         "type": "git",
         "url": "http://github.com/xtian/node-armory.git"
