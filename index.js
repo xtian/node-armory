@@ -88,7 +88,7 @@ function clone(obj) {
 
 
 // Parse arguments into an options object
-function parseArgs(args) {
+function parseArgs(args, params) {
     args = Array.prototype.slice.call(args);
 
     var callback = args.pop(),
@@ -108,6 +108,13 @@ function parseArgs(args) {
             callback: callback,
             query: []
         };
+
+        // Extra parameters
+        if (Array.isArray(params)) {
+            for (var i = 0, len = params.length; i < len; i++) {
+                options[params[i]] = args.shift();
+            }
+        }
 
         // Region
         if (args[0] && args[0].length === 2) {
@@ -230,6 +237,35 @@ exports.auctionData = function() {
     };
 
     this.auction.call(this, options, getData);
+};
+
+
+// Returns array of objects describing teams in a given arena ladder
+exports.ladder = function() {
+    var options = parseArgs(arguments, ['battlegroup']),
+        callback = options.callback,
+        path = '/pvp/arena/' + options.battlegroup + '/';
+
+    delete options.callback;
+
+    var parse = function(size) {
+        var parseOptions = clone(options);
+
+        get(path + size, parseOptions, function(err, res) {
+            if (err || !res) {
+                return callback(err);
+            }
+
+            callback(null, res.arenateam);
+        });
+    };
+
+
+    if (Array.isArray(options.names)) {
+        options.names.forEach(parse);
+    } else {
+        parse(options.names);
+    }
 };
 
 
