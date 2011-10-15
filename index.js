@@ -233,29 +233,6 @@ exports.auctionData = function() {
 };
 
 
-// Returns object with item data
-exports.item = function() {
-    var options = parseArgs(arguments),
-        callback = options.callback,
-        path = '/item/';
-
-    delete options.callback;
-
-    var parse = function(id) {
-        var parseOptions = clone(options);
-
-        get(path + id, parseOptions, callback);
-    };
-
-
-    if (Array.isArray(options.names)) {
-        options.names.forEach(parse);
-    } else {
-        parse(options.names);
-    }
-};
-
-
 // Returns array of realm objects with status info
 exports.realmStatus = function() {
     // Can't use parseArgs because all params are optional
@@ -298,6 +275,32 @@ exports.realmStatus = function() {
 ['character', 'guild', 'arena'].forEach(function(method) {
     exports[method] = function() {
         resource(method, arguments);
+    };
+});
+
+
+// Export quest and item API
+['item', 'quest'].forEach(function(method) {
+
+    exports[method] = function() {
+        var options = parseArgs(arguments),
+            callback = options.callback,
+            path = '/' + method + '/';
+
+        delete options.callback;
+
+        var parse = function(name) {
+            var parseOptions = clone(options);
+
+            get(path + name, parseOptions, callback);
+        };
+
+
+        if (Array.isArray(options.names)) {
+            options.names.forEach(parse);
+        } else {
+            parse(options.names);
+        }
     };
 });
 
