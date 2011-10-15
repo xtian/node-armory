@@ -2,29 +2,32 @@ var request = require('request'),
     crypto = require('crypto');
 
 exports.defaultRegion = 'us';
-exports.privateKey = null;
-exports.publicKey = null;
-
+exports.privateKey = exports.publicKey = null;
 
 // Makes request
-function get(options, callback) {
+function get(path, options, callback) {
     var headers = { 'Accept': 'application/json', 'Connection': 'keep-alive' },
-        uri, path;
+        uri;
 
-    if (typeof options === 'string') {
-        uri = options;
+    if (typeof options === 'function') {
+        callback = options;
         options = {};
+    }
+
+
+    // Handle full URLs
+    if (path.indexOf('http://') === 0) {
+        uri = path;
         path = uri.split('battle.net')[1];
 
     } else {
         options.region = options.region || exports.defaultRegion;
-        options.query = Array.isArray(options.query) ?
-            '?' + options.query.join('&') : '';
+        options.query = '?' + options.query.slice(0).join('&');
 
-        path = '/api/wow' + options.path;
+        path = '/api/wow' + path;
 
-        uri = encodeURI('https://' + options.region + '.battle.net' +
-            path + options.query);
+        uri = encodeURI('http://' + options.region + '.battle.net' + path +
+            options.query);
     }
 
 
@@ -33,6 +36,7 @@ function get(options, callback) {
         headers['If-Modified-Since'] = new Date(options.lastModified)
             .toUTCString();
     }
+
 
     // Authentication
     if (exports.privateKey && exports.publicKey) {
@@ -50,21 +54,16 @@ function get(options, callback) {
 
 
     request({ uri: uri, headers: headers }, function(err, res, body) {
-        if (err) {
+        if (err || !body) {
+
+            if (res.statusCode !== 304) {
+                err = err || new Error(res.statusCode);
+            }
+
             return callback(err);
         }
 
-
-        if (body) {
-            body = JSON.parse(body);
-
-        } else if (res.statusCode === 304) {
-            return callback();
-
-        } else {
-            return callback(new Error(res.statusCode + ', Empty response.'));
-        }
-
+        body = JSON.parse(body);
 
         if (body.status === 'nok') {
             return callback(new Error(body.reason));
@@ -75,45 +74,76 @@ function get(options, callback) {
 }
 
 
-// Requests one or more API resources
-function resource(method, options, callback) {
-    var names;
+function clone(obj) {
+    var ret = {};
 
-    // If single resource provided
-    if (typeof options === 'string') {
-        names = options;
-        options = {};
+    for (var prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+            ret[prop] = obj[prop];
+        }
+    }
 
-    } else if (options.names) {
-        names = options.names;
+    return ret;
+}
+
+
+// Parse arguments into an options object
+function parseArgs(args) {
+    args = Array.prototype.slice.call(args);
+
+    var callback = args.pop(),
+        options;
+
+    // Return object if given
+    if (typeof args[0] === 'object' && !Array.isArray(args[0])) {
+        options = args[0];
+
+        options.names = options.names || options.ids || '';
+        options.callback = callback;
+        options.query = [];
 
     } else {
-        return callback(new Error('No name(s) provided.'));
+        options = {
+            names: args.shift(),
+            callback: callback,
+            query: []
+        };
+
+        // Region
+        if (args[0] && args[0].length === 2) {
+            options.region = args.shift();
+        }
+
+        // Locale
+        if (args[0]) {
+            options.locale = args[0];
+        }
     }
 
 
-    options.query = [];
+    if (options.locale) {
+        options.query.push('locale=' + options.locale);
+    }
+
+    return options;
+}
+
+
+// Requests one or more API resources in the form "/method/realm/name"
+function resource(method, args) {
+    var options = parseArgs(args),
+        callback = options.callback,
+        path = [method, options.realm, options.size];
 
 
     if (Array.isArray(options.fields)) {
         options.query.push('fields=' + options.fields.join(','));
     }
 
-    if (options.locale) {
-        options.query.push('locale=' + options.locale);
-    }
-
-
-    options.path = [method, options.realm, options.size];
-
 
     var parse = function(name) {
-        var parseOptions = {
-            path: options.path.slice(0),
-            query: options.query.slice(0),
-            region: options.region,
-            lastModified: options.lastModified
-        };
+        var parseOptions = clone(options),
+            parsePath = path.slice(0);
 
         // If path elements passed with name
         if (name.indexOf('_') !== -1) {
@@ -121,153 +151,125 @@ function resource(method, options, callback) {
             name = name.split('_').reverse();
 
             // Name
-            parseOptions.path.push(name.pop());
+            parsePath.push(name.pop());
 
             // Realm
             if (name[0] && name[0].length > 3) {
-                parseOptions.path[1] = name.shift();
+                parsePath[1] = name.shift();
             }
 
             // Team size
-            if (name[0] && name[0].length === 3) {
-                parseOptions.path[2] = name.shift();
+            if (name[0]) {
+                parsePath[2] = name[0];
             }
 
         } else if (options.realm) {
-            parseOptions.path.push(name);
+            parsePath.push(name);
 
         } else {
             return callback(new Error('No realm provided for ' + name + '.'));
         }
 
-        // Remove empty path elements
-        parseOptions.path = '/' + parseOptions.path.filter(function(el) {
+        // Remove empty parsePath elements
+        parsePath = '/' + parsePath.filter(function(el) {
             return !!el;
         }).join('/');
 
-        get(parseOptions, callback);
+        get(parsePath, parseOptions, callback);
     };
 
-    if (Array.isArray(names)) {
-        names.forEach(parse);
+
+    if (Array.isArray(options.names)) {
+        options.names.forEach(parse);
     } else {
-        parse(names);
+        parse(options.names);
     }
 }
 
 
-// Auction API
+// Returns array of auction data file URLs
 exports.auction = function() {
-    var args = Array.prototype.slice.call(arguments),
-        callback = args.pop(),
-        realms, options;
+    var options = parseArgs(arguments),
+        callback = options.callback,
+        path = '/auction/data/';
 
-
-    if (typeof args[0] === 'string' || Array.isArray(args[0])) {
-        realms = args[0];
-        options = {};
-
-    } else {
-        options = args[0];
-        realms = options.realms;
-    }
-
-
-    // Region
-    if (args[1] && args[1].length === 2) {
-        options.region = args[1];
-    }
-
-    options.path = '/auction/data/';
-
+    delete options.callback;
 
     var parse = function(realm) {
-        var parseOptions = {
-            path: options.path + realm,
-            region: options.region,
-            lastModified: options.lastModified
-        };
+        var parseOptions = clone(options);
 
-        get(parseOptions, function(err, res) {
-            if (err) {
+        get(path + realm, parseOptions, function(err, res) {
+            if (err || !res) {
                 return callback(err);
-            } else if (!res) {
-                return callback();
             }
 
             callback(null, res.files);
         });
     };
 
-    if (Array.isArray(realms)) {
-        realms.forEach(parse);
+
+    if (Array.isArray(options.names)) {
+        options.names.forEach(parse);
     } else {
-        parse(realms);
+        parse(options.names);
     }
 };
 
 
-// Auction data dump
+// Returns auction data dump from first file URL
 exports.auctionData = function() {
-    var args = Array.prototype.slice.call(arguments),
-        callback = args.pop();
+    var options = parseArgs(arguments),
+        callback = options.callback;
 
     var getData = function(err, res) {
-        if (err) {
+        if (err || !res) {
             return callback(err);
-        } else if (!res) {
-            return callback();
         }
 
         get(res[0].url, callback);
     };
 
-    args.push(getData);
-    this.auction.apply(this, args);
+    this.auction.call(this, options, getData);
 };
 
 
-// Item API
+// Returns object with item data
 exports.item = function() {
-    var args = Array.prototype.slice.call(arguments),
-        callback = args.pop(),
-        options = { path: '/item/', query: [] };
+    var options = parseArgs(arguments),
+        callback = options.callback,
+        path = '/item/';
 
-
-    // Region
-    if (args[1] && args[1].length === 2) {
-        options.region = args[1];
-    }
+    delete options.callback;
 
     var parse = function(id) {
-        get({
-            path: options.path + id,
-            region: options.region,
-            query: options.query.slice(0)
-        }, callback);
+        var parseOptions = clone(options);
+
+        get(path + id, parseOptions, callback);
     };
 
-    if (Array.isArray(args[0])) {
-        args[0].forEach(parse);
+
+    if (Array.isArray(options.names)) {
+        options.names.forEach(parse);
     } else {
-        parse(args[0]);
+        parse(options.names);
     }
 };
 
 
-// Realm Status API
+// Returns array of realm objects with status info
 exports.realmStatus = function() {
+    // Can't use parseArgs because all params are optional
     var args = Array.prototype.slice.call(arguments),
         callback = args.pop(),
-        options = { path: '/realm/status', query: [] };
-
+        options = { query: [] },
+        path = '/realm/status';
 
     // Multiple realms
     if (Array.isArray(args[0])) {
         args[0] = args[0].join('&realm=');
     }
 
-    // Single realm or joined multiple realms
+    // Single realm or joined realms
     if (args[0] && args[0].length > 2) {
         options.query.push('realm=' + args.shift());
     }
@@ -282,38 +284,38 @@ exports.realmStatus = function() {
         options.query.push('locale=' + args[0]);
     }
 
-    get(options, function(err, response) {
+    get(path, options, function(err, res) {
         if (err) {
             return callback(err);
         }
 
-        callback(null, response.realms);
+        callback(null, res.realms);
     });
 };
 
 
-// Exports resource API using generic function
+// Export resource API
 ['character', 'guild', 'arena'].forEach(function(method) {
-    exports[method] = function(options, callback) {
-        resource(method, options, callback);
+    exports[method] = function() {
+        resource(method, arguments);
     };
 });
 
 
-// Static data pages
+// Export static data API
 [
     'battlegroups',
-    'characterAchievements'
+    'characterAchievements',
     'classes',
     'guildAchievements',
     'perks',
-    'races'
+    'races',
     'rewards'
 
 ].forEach(function(method) {
-    var path;
+    var property = method,
+        path;
 
-    // Add appropriate prefix
     switch (method) {
         case 'perks':
         case 'rewards':
@@ -325,17 +327,20 @@ exports.realmStatus = function() {
             break;
         case 'characterAchievements':
         case 'guildAchievements':
+            property = 'achievements';
             path = method.replace('Ach', '/ach');
             break;
+        default:
+            path = method;
     }
 
-    path = '/data/' + path;
-
+    path = '/data/' + path + '/';
 
     exports[method] = function() {
+        // Can't use parseArgs because all params are optional
         var args = Array.prototype.slice.call(arguments),
             callback = args.pop(),
-            options = { path: path, query: [] };
+            options = { query: [] };
 
         // Region
         if (args[0] && args[0].length === 2) {
@@ -347,12 +352,12 @@ exports.realmStatus = function() {
             options.query.push('locale=' + args[0]);
         }
 
-        get(options, function(err, res) {
+        get(path, options, function(err, res) {
             if (err) {
                 return callback(err);
             }
 
-            callback(null, res[method]);
+            callback(null, res[property]);
         });
     };
 });
