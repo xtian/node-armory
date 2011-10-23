@@ -1,8 +1,11 @@
 {
     "name": "armory",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "description": "A simple wrapper for the WoW Armory API.",
     "keywords": ["wow", "warcraft", "armory"],
+    "bugs": {
+      "url": "https://github.com/xtian/node-armory/issues"
+    },
     "author": "Christian Wesselhoeft <christian@cwesselhoeft.com>",
     "main": "index.js",
     "repository": {
@@ -10,7 +13,10 @@
         "url": "http://github.com/xtian/node-armory.git"
     },
     "dependencies": {
-        "request": ">=1.9.5"
+        "request": "~2"
+    },
+    "devDependencies": {
+        "nodeunit": "~0.5.5"
     },
     "engines": ["node >= 0.4.0"]
 }
