@@ -1,4 +1,4 @@
-var armory = require('../lib/armory');
+var armory = require('../');
 
 module.exports = {
 

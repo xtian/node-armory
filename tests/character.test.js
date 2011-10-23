@@ -1,4 +1,4 @@
-var armory = require('../lib/armory');
+var armory = require('../');
 
 module.exports = {
 
@@ -11,7 +11,7 @@ module.exports = {
         });
     },
 
-    'character with international name and server': function(test) {
+    'international name and server': function(test) {
         armory.character({
             names: 'Альвеона_Свежеватель Душ',
             region: 'eu'
@@ -23,7 +23,7 @@ module.exports = {
         });
     },
 
-    'request additional fields': function(test) {
+    'additional fields': function(test) {
         armory.character({
             names: 'Dargonaut_Shadowmoon',
             fields: ['items', 'talents']
@@ -36,7 +36,7 @@ module.exports = {
         });
     },
 
-    'request additional fields with locale': function(test) {
+    'additional fields with locale': function(test) {
         armory.character({
             names: 'Dargonaut_Shadowmoon',
             fields: ['titles'],
@@ -51,7 +51,45 @@ module.exports = {
         });
     },
 
-    'request character with lastModified': function(test) {
+    'region as parameter': function(test) {
+        armory.character(
+            'Альвеона_Свежеватель Душ',
+            'eu',
+
+            function(err, character) {
+                test.ifError(err);
+                test.ok(character);
+                test.equal(character.name, 'Альвеона');
+                test.done();
+            }
+        );
+    },
+
+    'locale as parameter': function(test) {
+        armory.character('Dargonaut_Shadowmoon', 'es_MX', function(err, res) {
+            test.ifError(err);
+            test.ok(res);
+            test.equal(res.name, 'Dargonaut');
+            test.done();
+        });
+    },
+
+    'region and locale as parameters': function(test) {
+        armory.character(
+            'Альвеона_Свежеватель Душ',
+            'eu',
+            'fr_FR',
+
+            function(err, character) {
+                test.ifError(err);
+                test.ok(character);
+                test.equal(character.name, 'Альвеона');
+                test.done();
+            }
+        );
+    },
+
+    'lastModified': function(test) {
         var options = {
             names: 'Dargonaut',
             realm: 'Shadowmoon'

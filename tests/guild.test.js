@@ -1,4 +1,4 @@
-var armory = require('../lib/armory');
+var armory = require('../');
 
 module.exports = {
 
@@ -11,7 +11,7 @@ module.exports = {
         });
     },
 
-    'request additional fields': function(test) {
+    'additional fields': function(test) {
         armory.guild({
             names: 'The Gentlemens Club_Shadowmoon',
             fields: ['members', 'achievements']
@@ -27,7 +27,7 @@ module.exports = {
         });
     },
 
-    'request guild with lastModified': function(test) {
+    'lastModified': function(test) {
         var options = {
             names: 'The Gentlemens Club',
             realm: 'Shadowmoon'

@@ -1,42 +1,6 @@
-var armory = require('../lib/armory');
+var armory = require('../');
 
 module.exports = {
-
-    'perks': function(test) {
-        armory.perks(function(err, perks) {
-            test.ifError(err);
-            test.ok(Array.isArray(perks));
-            test.ok(perks.length);
-            test.done();
-        });
-    },
-
-    'rewards': function(test) {
-        armory.rewards(function(err, rewards) {
-            test.ifError(err);
-            test.ok(Array.isArray(rewards));
-            test.ok(rewards.length);
-            test.done();
-        });
-    },
-
-    'classes': function(test) {
-        armory.classes(function(err, classes) {
-            test.ifError(err);
-            test.ok(Array.isArray(classes));
-            test.ok(classes.length);
-            test.done();
-        });
-    },
-
-    'races': function(test) {
-        armory.races(function(err, races) {
-            test.ifError(err);
-            test.ok(Array.isArray(races));
-            test.ok(races.length);
-            test.done();
-        });
-    },
 
     'region': function(test) {
         armory.races('eu', function(err, races) {
@@ -64,6 +28,24 @@ module.exports = {
             test.ok(races.length);
             test.equal(races[1].name, 'Mensch');
             test.done();
+        });
+    },
+
+    'battlegroups': function(test) {
+        armory.battlegroups(function(err, results) {
+           test.ifError(err);
+           test.ok(Array.isArray(results));
+           test.ok(results.length);
+           test.done();
+        });
+    },
+
+    'characterAcheivements': function(test) {
+        armory.characterAchievements(function(err, results) {
+           test.ifError(err);
+           test.ok(Array.isArray(results));
+           test.ok(results.length);
+           test.done();
         });
     }
 };

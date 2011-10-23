@@ -1,4 +1,4 @@
-var armory = require('../lib/armory');
+var armory = require('../');
 
 module.exports = {
 
@@ -13,8 +13,30 @@ module.exports = {
         });
     },
 
+    'all US realms with locale': function(test) {
+        armory.realmStatus('es_MX', function(err, realms) {
+            test.ifError(err);
+            test.ok(Array.isArray(realms));
+            test.ok(realms.length > 1);
+            test.ok(realms[0].slug);
+
+            test.done();
+        });
+    },
+
     'all EU realms': function(test) {
         armory.realmStatus('eu', function(err, realms) {
+            test.ifError(err);
+            test.ok(Array.isArray(realms));
+            test.ok(realms.length > 1);
+            test.ok(realms[0].slug);
+
+            test.done();
+        });
+    },
+
+    'all EU realms with locale': function(test) {
+        armory.realmStatus('eu', 'fr_FR', function(err, realms) {
             test.ifError(err);
             test.ok(Array.isArray(realms));
             test.ok(realms.length > 1);
@@ -48,6 +70,25 @@ module.exports = {
 
             test.done();
         });
+    },
+
+    'single EU realm with locale': function(test) {
+        armory.realmStatus(
+            'Свежеватель Душ',
+            'eu',
+            'fr_FR',
+
+            function(err, realms) {
+                test.ifError(err);
+                test.ok(Array.isArray(realms));
+
+                realms = realms[0];
+                test.equal(realms.name, 'Soulflayer');
+                test.equal(realms.slug, 'soulflayer');
+
+                test.done();
+            }
+        );
     },
 
     'multiple US realms': function(test) {
