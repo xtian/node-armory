@@ -133,6 +133,7 @@ The first argument can be a single item ID, an array of IDs, or an object.
 
 
 ***
+### ladder(options, callback)
 ### ladder(sizes, battlegroup, [region, locale,] callback)
 Retrieves an array of objects containing data about arena teams for the given ladder and battlegroup.
 
@@ -144,7 +145,7 @@ Retrieves an array of objects containing data about arena teams for the given la
         }, [0, 0])
     });
 
-The first argument can be a single item ID, an array of IDs, or an object with the following additional properties:
+The first argument can be a single ladder type, an array of ladder types, or an object with the following additional properties:
 
 * `battlegroup`
 
