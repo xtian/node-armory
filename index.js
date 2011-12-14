@@ -144,7 +144,7 @@ function resource(method, args) {
 
 
     if (Array.isArray(options.fields)) {
-        options.query.push('fields=' + options.fields.join(','));
+        options.query.push('fields=' + options.fields.join());
     }
 
 
