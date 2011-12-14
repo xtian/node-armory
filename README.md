@@ -74,13 +74,12 @@ Retrieves an object containing data about a guild.
 
     }, function(err, guild) {
 
-        var dwarves = guild.members.reduce(function(array, member) {
-            if (member.character.race === 3) {
-                array.push(member.character.name);
-            }
+        var dwarves = guild.members.filter(function(member) {
+            return member.character.race === 3;
 
-            return array;
-        }, []);
+        }).map(function(member) {
+            return member.character.name;
+        });
 
         var hairColors = [];
 
