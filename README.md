@@ -37,7 +37,7 @@ Retrieves an object of data from the first auction data URL provided by the API.
 
 The first argument can be a string, an array, or an object.
 
-[Auction API Documentation](http://blizzard.github.com/api-wow-docs/#id3683980)
+[Auction API Documentation](http://blizzard.github.com/api-wow-docs/#id3381986)
 
 
 ***
@@ -101,9 +101,9 @@ Retrieves an object containing data about a guild.
 
 Strings in the form `'Name_Realm'` can be used in the `names` property. Parameters specified in these strings will override those provided in the `options` object.
 
-[Character API Documentation](http://blizzard.github.com/api-wow-docs/#id3682393)
+[Character API Documentation](http://blizzard.github.com/api-wow-docs/#id3380312)
 
-[Guild API Documentation](http://blizzard.github.com/api-wow-docs/#id3683544)
+[Guild API Documentation](http://blizzard.github.com/api-wow-docs/#id3381560)
 
 
 ***
@@ -113,6 +113,9 @@ Retrieves an object containing data about an item.
 ### quest(options, callback)
 ### quest(ids, [region, locale,] callback)
 Retrieves an object containing data about a quest.
+### recipe(options, callback)
+### recipe(ids, [region, locale,] callback)
+Retrieves an object containing data about a recipe.
 
     var avgILvl = 0,
         i = 0;
@@ -128,7 +131,7 @@ Retrieves an object containing data about a quest.
 
 The first argument can be a single item ID, an array of IDs, or an object.
 
-[Item API Documentation](http://blizzard.github.com/api-wow-docs/#id3684151)
+[Item API Documentation](http://blizzard.github.com/api-wow-docs/#id3382086)
 
 
 ***
@@ -162,7 +165,7 @@ Retrieves an array containing the status of one or more realms.
 
 A realm name or array of realm names can be passed as the first argument. If no names are provided, the status of all realms will be returned.
 
-[Realm Status API Documentation](http://blizzard.github.com/api-wow-docs/#id3683928)
+[Realm Status API Documentation](http://blizzard.github.com/api-wow-docs/#id3381933)
 
 
 ***
@@ -185,7 +188,7 @@ Retrieves a static array of data about guild rewards.
         console.log('Yo puede jugar un ' + res[9].name);
     });
 
-[Data API Documentation](http://blizzard.github.com/api-wow-docs/#id3684070)
+[Data API Documentation](http://blizzard.github.com/api-wow-docs/#id3382202)
 
 
 ***
@@ -196,7 +199,7 @@ The region to use if none is specified. `'us'` by default.
 #### publicKey, privateKey
 Keys to use for generating an authorization header.
 
-[Authentication Documentation](http://blizzard.github.com/api-wow-docs/#id3681959)
+[Authentication Documentation](http://blizzard.github.com/api-wow-docs/#id3379854)
 
 
 ### Notes on usage:
