@@ -316,8 +316,7 @@ exports.realmStatus = function() {
 
 
 // Export quest and item API
-['item', 'quest'].forEach(function(method) {
-
+['item', 'quest', 'recipe'].forEach(function(method) {
     exports[method] = function() {
         var options = parseArgs(arguments),
             callback = options.callback,
