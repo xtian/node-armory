@@ -56,7 +56,7 @@ function get(path, options, callback) {
     request({ uri: uri, headers: headers }, function(err, res, body) {
         if (err || !body) {
 
-            if (res.statusCode !== 304) {
+            if (res && res.statusCode !== 304) {
                 err = err || new Error(res.statusCode);
             }
 
