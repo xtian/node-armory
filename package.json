@@ -1,6 +1,6 @@
 {
     "name": "armory",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "description": "A simple wrapper for the WoW Armory API.",
     "keywords": ["wow", "warcraft", "armory"],
     "bugs": {
@@ -16,7 +16,7 @@
         "request": "~2"
     },
     "devDependencies": {
-        "nodeunit": "~0.5.5"
+        "nodeunit": "~0.6.4"
     },
     "engines": ["node >= 0.4.0"]
 }
