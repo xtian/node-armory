@@ -6,7 +6,7 @@ exports.privateKey = exports.publicKey = null;
 
 // Makes request
 function get(path, options, callback) {
-    var headers = { 'Accept': 'application/json', 'Connection': 'keep-alive' },
+    var headers = { 'Connection': 'keep-alive' },
         uri;
 
     if (typeof options === 'function') {
