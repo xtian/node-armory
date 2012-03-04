@@ -2,9 +2,9 @@
     "name": "armory",
     "version": "0.4.2",
     "description": "A simple wrapper for the WoW Armory API.",
-    "keywords": ["wow", "warcraft", "armory"],
+    "keywords": ["wow", "warcraft", "armory", "api", "blizzard"],
     "bugs": {
-      "url": "https://github.com/xtian/node-armory/issues"
+        "url": "https://github.com/xtian/node-armory/issues"
     },
     "author": "Christian Wesselhoeft <christian@cwesselhoeft.com>",
     "main": "index.js",
