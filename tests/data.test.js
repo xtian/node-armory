@@ -1,9 +1,9 @@
-var armory = require('../');
+var armory = require('../').defaults({ region: 'us' });
 
 module.exports = {
 
     'region': function(test) {
-        armory.races('eu', function(err, races) {
+        armory.races({ region: 'eu' }, function(err, races) {
             test.ifError(err);
             test.ok(Array.isArray(races));
             test.ok(races.length);
@@ -12,17 +12,17 @@ module.exports = {
     },
 
     'locale': function(test) {
-        armory.races('es_MX', function(err, races) {
+        armory.races({ locale: 'es_MX' }, function(err, races) {
             test.ifError(err);
             test.ok(Array.isArray(races));
             test.ok(races.length);
-            test.equal(races[0].name, 'Enano');
+            test.equal(races[0].name, 'Humano');
             test.done();
         });
     },
 
     'region and locale': function(test) {
-        armory.races('eu', 'de_DE', function(err, races) {
+        armory.races({ region: 'eu', locale: 'de_DE' }, function(err, races) {
             test.ifError(err);
             test.ok(Array.isArray(races));
             test.ok(races.length);

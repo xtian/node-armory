@@ -1,4 +1,4 @@
-var armory = require('../');
+var armory = require('../').defaults({ region: 'us' });
 
 module.exports = {
 
@@ -14,7 +14,7 @@ module.exports = {
     },
 
     'all US realms with locale': function(test) {
-        armory.realmStatus('es_MX', function(err, realms) {
+        armory.realmStatus({ locale: 'es_MX' }, function(err, realms) {
             test.ifError(err);
             test.ok(Array.isArray(realms));
             test.ok(realms.length > 1);
@@ -25,7 +25,7 @@ module.exports = {
     },
 
     'all EU realms': function(test) {
-        armory.realmStatus('eu', function(err, realms) {
+        armory.realmStatus({ region: 'eu' }, function(err, realms) {
             test.ifError(err);
             test.ok(Array.isArray(realms));
             test.ok(realms.length > 1);
@@ -36,7 +36,11 @@ module.exports = {
     },
 
     'all EU realms with locale': function(test) {
-        armory.realmStatus('eu', 'fr_FR', function(err, realms) {
+        armory.realmStatus({
+            region: 'eu',
+            locale: 'fr_FR'
+
+        }, function(err, realms) {
             test.ifError(err);
             test.ok(Array.isArray(realms));
             test.ok(realms.length > 1);
@@ -60,7 +64,29 @@ module.exports = {
     },
 
     'single EU realm': function(test) {
-        armory.realmStatus('Свежеватель Душ', 'eu', function(err, realms) {
+        armory.realmStatus({
+            name: 'Свежеватель Душ',
+            region: 'eu'
+
+        }, function(err, realms) {
+            test.ifError(err);
+            test.ok(Array.isArray(realms));
+
+            realms = realms[0];
+            test.equal(realms.name, 'Soulflayer');
+            test.equal(realms.slug, 'soulflayer');
+
+            test.done();
+        });
+    },
+
+    'single EU realm with locale': function(test) {
+        armory.realmStatus({
+            name: 'Свежеватель Душ',
+            region: 'eu',
+            locale: 'ru_RU'
+
+        }, function(err, realms) {
             test.ifError(err);
             test.ok(Array.isArray(realms));
 
@@ -70,25 +96,6 @@ module.exports = {
 
             test.done();
         });
-    },
-
-    'single EU realm with locale': function(test) {
-        armory.realmStatus(
-            'Свежеватель Душ',
-            'eu',
-            'fr_FR',
-
-            function(err, realms) {
-                test.ifError(err);
-                test.ok(Array.isArray(realms));
-
-                realms = realms[0];
-                test.equal(realms.name, 'Soulflayer');
-                test.equal(realms.slug, 'soulflayer');
-
-                test.done();
-            }
-        );
     },
 
     'multiple US realms': function(test) {
@@ -107,21 +114,22 @@ module.exports = {
     },
 
     'multiple EU realms': function(test) {
-        armory.realmStatus(
-            ['Свежеватель Душ', 'Festung der Stürme'],
-            'eu',
-            function(err, realms) {
+        armory.realmStatus({
+            name: ['Свежеватель Душ', 'Festung der Stürme'],
+            region: 'eu'
 
-                test.ifError(err);
-                test.ok(Array.isArray(realms));
-                test.equal(realms.length, 2);
+        }, function(err, realms) {
 
-                test.equal(realms[0].name, 'Свежеватель Душ');
-                test.equal(realms[0].slug, 'свежеватель-душ');
-                test.equal(realms[1].name, 'Festung der Stürme');
-                test.equal(realms[1].slug, 'festung-der-sturme');
+            test.ifError(err);
+            test.ok(Array.isArray(realms));
+            test.equal(realms.length, 2);
 
-                test.done();
+            test.equal(realms[0].name, 'Soulflayer');
+            test.equal(realms[0].slug, 'soulflayer');
+            test.equal(realms[1].name, 'Festung der Stürme');
+            test.equal(realms[1].slug, 'festung-der-sturme');
+
+            test.done();
         });
     },
 

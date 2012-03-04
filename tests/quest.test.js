@@ -1,4 +1,4 @@
-var armory = require('../');
+var armory = require('../').defaults({ region: 'us' });
 
 module.exports = {
 
@@ -11,28 +11,8 @@ module.exports = {
         });
     },
 
-    'multiple quests': function(test) {
-        var quests = [];
-
-        test.expect(9);
-
-        armory.quest([11547, 11533, 11525], function(err, quest) {
-            test.ifError(err);
-            test.ok(quest);
-
-            quests.push(quest.id);
-
-            if (quests.length === 3) {
-                test.notEqual(quests.indexOf(11547), -1);
-                test.notEqual(quests.indexOf(11533), -1);
-                test.notEqual(quests.indexOf(11525), -1);
-                test.done();
-            }
-        });
-    },
-
     'region': function(test) {
-        armory.quest(11546, 'eu', function(err, quest) {
+        armory.quest({ id: 11546, region: 'eu' }, function(err, quest) {
             test.ifError(err);
             test.ok(quest);
             test.equal(quest.id, 11546);
@@ -41,7 +21,7 @@ module.exports = {
     },
 
     'locale': function(test) {
-        armory.quest(11546, 'de_DE', function(err, quest) {
+        armory.quest({ id: 11546, locale: 'de_DE' }, function(err, quest) {
             test.ifError(err);
             test.ok(quest);
             test.equal(quest.id, 11546);
@@ -50,7 +30,12 @@ module.exports = {
     },
 
     'region and locale': function(test) {
-        armory.quest(11546, 'eu', 'de_DE', function(err, quest) {
+        armory.quest({
+            id: 11546,
+            region: 'eu',
+            locale: 'de_DE'
+
+        }, function(err, quest) {
             test.ifError(err);
             test.ok(quest);
             test.equal(quest.id, 11546);

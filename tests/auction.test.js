@@ -1,4 +1,4 @@
-var armory = require('../');
+var armory = require('../').defaults({ region: 'us' });
 
 module.exports = {
 
@@ -11,31 +11,16 @@ module.exports = {
         });
     },
 
-    'multiple realms': function(test) {
-        var responses = [];
-
-        test.expect(6);
-
-        armory.auction(['Shadowmoon', 'Nazgrel'], function(err, urls) {
-            test.ifError(err);
-            test.ok(Array.isArray(urls));
-            test.ok(urls.length);
-
-            responses.push(urls);
-
-            if (responses.length === 2) {
+    'region': function(test) {
+        armory.auction(
+            { name: 'Свежеватель Душ', region: 'eu' },
+            function(err, urls) {
+                test.ifError(err);
+                test.ok(Array.isArray(urls));
+                test.ok(urls.length);
                 test.done();
             }
-        });
-    },
-
-    'region': function(test) {
-        armory.auction('Свежеватель Душ', 'eu', function(err, urls) {
-            test.ifError(err);
-            test.ok(Array.isArray(urls));
-            test.ok(urls.length);
-            test.done();
-        });
+        );
     },
 
     'lastModified': function(test) {
@@ -47,7 +32,7 @@ module.exports = {
             var lastModified = urls[0].lastModified;
 
             armory.auction({
-                names: 'Shadowmoon',
+                name: 'Shadowmoon',
                 lastModified: lastModified
 
             }, function(err, res) {
@@ -70,28 +55,12 @@ module.exports = {
         });
     },
 
-    'multiple realm data': function(test) {
-        var realms = [];
-
-        test.expect(6);
-
-        armory.auctionData(['Shadowmoon', 'Nazgrel'], function(err, res) {
-            test.ifError(err);
-            test.ok(res);
-
-            realms.push(res.realm.name);
-
-            if (realms.length === 2) {
-                test.notEqual(realms.indexOf('Shadowmoon'), -1);
-                test.notEqual(realms.indexOf('Nazgrel'), -1);
-
-                test.done();
-            }
-        });
-    },
-
     'data with region': function(test) {
-        armory.auctionData('Tarren Mill', 'eu', function(err, res) {
+        armory.auctionData({
+            name: 'Tarren Mill',
+            region: 'eu'
+
+        }, function(err, res) {
             test.ifError(err);
             test.ok(res);
             test.ok(res.alliance);
@@ -110,14 +79,13 @@ module.exports = {
             var lastModified = urls[0].lastModified;
 
             armory.auctionData({
-                names: 'Shadowmoon',
+                name: 'Shadowmoon',
                 lastModified: lastModified
 
             }, function(err, res) {
                 test.ifError(err);
                 test.equal(res, undefined);
                 test.done();
-
             });
         });
     }
