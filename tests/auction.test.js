@@ -1,92 +1,91 @@
-var armory = require('../').defaults({ region: 'us' });
+var test = require('tap').test,
+    armory = require('../').defaults({ region: 'us' });
 
-module.exports = {
+test('single realm', function(test) {
+    armory.auction('Shadowmoon', function(err, urls) {
+        test.error(err);
+        test.ok(Array.isArray(urls));
+        test.ok(urls.length);
+        test.end();
+    });
+});
 
-    'single realm': function(test) {
-        armory.auction('Shadowmoon', function(err, urls) {
-            test.ifError(err);
-            test.ok(Array.isArray(urls));
-            test.ok(urls.length);
-            test.done();
-        });
-    },
+test('region', function(test) {
+    armory.auction({
+        name: 'Свежеватель Душ',
+        region: 'eu'
 
-    'region': function(test) {
-        armory.auction(
-            { name: 'Свежеватель Душ', region: 'eu' },
-            function(err, urls) {
-                test.ifError(err);
-                test.ok(Array.isArray(urls));
-                test.ok(urls.length);
-                test.done();
-            }
-        );
-    },
+    }, function(err, urls) {
+        test.error(err);
+        test.ok(Array.isArray(urls));
+        test.ok(urls.length);
+        test.end();
+    });
+});
 
-    'lastModified': function(test) {
-        armory.auction('Shadowmoon', function(err, urls) {
-            test.ifError(err);
-            test.ok(Array.isArray(urls));
-            test.ok(urls[0].lastModified);
+test('lastModified', function(test) {
+    armory.auction('Shadowmoon', function(err, urls) {
+        test.error(err);
+        test.ok(Array.isArray(urls));
+        test.ok(urls[0].lastModified);
 
-            var lastModified = urls[0].lastModified;
+        var lastModified = urls[0].lastModified;
 
-            armory.auction({
-                name: 'Shadowmoon',
-                lastModified: lastModified
-
-            }, function(err, res) {
-                test.ifError(err);
-                test.equal(res, undefined);
-                test.done();
-
-            });
-        });
-    },
-
-    'single realm data': function(test) {
-        armory.auctionData('Shadowmoon', function(err, res) {
-            test.ifError(err);
-            test.ok(res);
-            test.ok(res.alliance);
-            test.ok(res.horde);
-            test.ok(res.neutral);
-            test.done();
-        });
-    },
-
-    'data with region': function(test) {
-        armory.auctionData({
-            name: 'Tarren Mill',
-            region: 'eu'
+        armory.auction({
+            name: 'Shadowmoon',
+            lastModified: lastModified
 
         }, function(err, res) {
-            test.ifError(err);
-            test.ok(res);
-            test.ok(res.alliance);
-            test.ok(res.horde);
-            test.ok(res.neutral);
-            test.done();
+            test.error(err);
+            test.equal(res, undefined);
+            test.end();
         });
-    },
+    });
+});
 
-    'data with lastModified': function(test) {
-        armory.auction('Shadowmoon', function(err, urls) {
-            test.ifError(err);
-            test.ok(urls);
-            test.ok(urls[0].lastModified);
+test('single realm data', function(test) {
+    armory.auctionData('Shadowmoon', function(err, res) {
+        test.error(err);
+        test.ok(res);
+        test.ok(res.alliance);
+        test.ok(res.horde);
+        test.ok(res.neutral);
+        test.end();
+    });
+});
 
-            var lastModified = urls[0].lastModified;
+test('data with region', function(test) {
+    armory.auctionData({
+        name: 'Tarren Mill',
+        region: 'eu'
 
-            armory.auctionData({
-                name: 'Shadowmoon',
-                lastModified: lastModified
+    }, function(err, res) {
+        test.error(err);
+        test.ok(res);
+        test.ok(res.alliance);
+        test.ok(res.horde);
+        test.ok(res.neutral);
+        test.end();
+    });
+});
 
-            }, function(err, res) {
-                test.ifError(err);
-                test.equal(res, undefined);
-                test.done();
-            });
+test('data with lastModified', function(test) {
+    armory.auction('Shadowmoon', function(err, urls) {
+        test.error(err);
+        test.ok(urls);
+        test.ok(urls[0].lastModified);
+
+        var lastModified = urls[0].lastModified;
+
+        armory.auctionData({
+            name: 'Shadowmoon',
+            lastModified: lastModified
+
+        }, function(err, res) {
+            test.error(err);
+            test.equal(res, undefined);
+            test.end();
         });
-    }
-};
+    });
+});
+

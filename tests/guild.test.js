@@ -1,63 +1,59 @@
-var armory = require('../').defaults({
-    region: 'us',
-    realm: 'Shadowmoon',
-    name: 'The Gentlemens Club'
+var test = require('tap').test,
+    armory = require('../').defaults({
+        region: 'us',
+        realm: 'Shadowmoon',
+        name: 'The Gentlemens Club'
+    });
+
+test('single guild', function(test) {
+    armory.guild(function(err, guild) {
+        test.error(err);
+        test.ok(guild);
+        test.equal(guild.name, 'The Gentlemens Club');
+        test.end();
+    });
 });
 
-module.exports = {
+test('additional fields', function(test) {
+    armory.guild({ fields: ['members', 'achievements'] }, function(err, guild) {
+        test.error(err);
+        test.ok(guild);
+        test.ok(Array.isArray(guild.members));
+        test.ok(guild.members.length);
+        test.ok(guild.achievements);
+        test.ok(Array.isArray(guild.achievements.criteria));
+        test.ok(guild.achievements.criteria.length);
+        test.end();
+    });
+});
 
-    'single guild': function(test) {
-        armory.guild(function(err, guild) {
-            test.ifError(err);
-            test.ok(guild);
-            test.equal(guild.name, 'The Gentlemens Club');
-            test.done();
-        });
-    },
+test('lastModified', function(test) {
+    armory.guild(function(err, guild) {
+        test.error(err);
+        test.ok(guild);
+        test.ok(guild.lastModified);
 
-    'additional fields': function(test) {
         armory.guild({
-            fields: ['members', 'achievements']
+            lastModified: guild.lastModified
+
         }, function(err, guild) {
-            test.ifError(err);
-            test.ok(guild);
-            test.ok(Array.isArray(guild.members));
-            test.ok(guild.members.length);
-            test.ok(guild.achievements);
-            test.ok(Array.isArray(guild.achievements.criteria));
-            test.ok(guild.achievements.criteria.length);
-            test.done();
+            test.error(err);
+            test.equal(guild, undefined);
+            test.end();
         });
-    },
+    });
+});
 
-    'lastModified': function(test) {
-        armory.guild(function(err, guild) {
-            test.ifError(err);
-            test.ok(guild);
-            test.ok(guild.lastModified);
+test('non-existent guild', function(test) {
+    armory.guild('foo', function(err, guild) {
+        test.ok(err);
+        test.end();
+    });
+});
 
-            armory.guild({
-                lastModified: guild.lastModified
-
-            }, function(err, guild) {
-                test.ifError(err);
-                test.equal(guild, undefined);
-                test.done();
-            });
-        });
-    },
-
-    'non-existent guild': function(test) {
-        armory.guild('foo', function(err, guild) {
-            test.ok(err);
-            test.done();
-        });
-    },
-
-    'empty options': function(test) {
-        require('../').guild({}, function(err, guild) {
-            test.ok(err);
-            test.done();
-        });
-    }
-};
+test('empty options', function(test) {
+    require('../').guild({}, function(err, guild) {
+        test.ok(err);
+        test.end();
+    });
+});

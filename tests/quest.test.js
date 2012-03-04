@@ -1,52 +1,50 @@
-var armory = require('../').defaults({ region: 'us' });
+var test = require('tap').test,
+    armory = require('../').defaults({ region: 'us' });
 
-module.exports = {
+test('single quest', function(test) {
+    armory.quest(11546, function(err, quest) {
+        test.error(err);
+        test.ok(quest);
+        test.equal(quest.id, 11546);
+        test.end();
+    });
+});
 
-    'single quest': function(test) {
-        armory.quest(11546, function(err, quest) {
-            test.ifError(err);
-            test.ok(quest);
-            test.equal(quest.id, 11546);
-            test.done();
-        });
-    },
+test('region', function(test) {
+    armory.quest({ id: 11546, region: 'eu' }, function(err, quest) {
+        test.error(err);
+        test.ok(quest);
+        test.equal(quest.id, 11546);
+        test.end();
+    });
+});
 
-    'region': function(test) {
-        armory.quest({ id: 11546, region: 'eu' }, function(err, quest) {
-            test.ifError(err);
-            test.ok(quest);
-            test.equal(quest.id, 11546);
-            test.done();
-        });
-    },
+test('locale', function(test) {
+    armory.quest({ id: 11546, locale: 'de_DE' }, function(err, quest) {
+        test.error(err);
+        test.ok(quest);
+        test.equal(quest.id, 11546);
+        test.end();
+    });
+});
 
-    'locale': function(test) {
-        armory.quest({ id: 11546, locale: 'de_DE' }, function(err, quest) {
-            test.ifError(err);
-            test.ok(quest);
-            test.equal(quest.id, 11546);
-            test.done();
-        });
-    },
+test('region and locale', function(test) {
+    armory.quest({
+        id: 11546,
+        region: 'eu',
+        locale: 'de_DE'
 
-    'region and locale': function(test) {
-        armory.quest({
-            id: 11546,
-            region: 'eu',
-            locale: 'de_DE'
+    }, function(err, quest) {
+        test.error(err);
+        test.ok(quest);
+        test.equal(quest.id, 11546);
+        test.end();
+    });
+});
 
-        }, function(err, quest) {
-            test.ifError(err);
-            test.ok(quest);
-            test.equal(quest.id, 11546);
-            test.done();
-        });
-    },
-
-    'non-existent quest': function(test) {
-        armory.quest(0, function(err, quest) {
-            test.ok(err);
-            test.done();
-        });
-    }
-};
+test('non-existent quest', function(test) {
+    armory.quest(0, function(err, quest) {
+        test.ok(err);
+        test.end();
+    });
+});
