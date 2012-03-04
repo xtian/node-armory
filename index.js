@@ -1,6 +1,10 @@
 var request = require('request'),
     crypto = require('crypto');
 
+try {
+    var wowhead = require('wowhead');
+} catch (e) {}
+
 var armory = { privateKey: null, publicKey: null };
 
 
@@ -156,6 +160,20 @@ armory.defaults = function(defaults) {
 };
 
 
+// Retrieves object describing an item with an optional fallback to Wowhead
+armory.item = function(options, callback) {
+    var path = '/item/' + options.name;
+
+    this._get(path, options, function(err, res) {
+        if (err && wowhead && options.fallback !== false) {
+            return wowhead(options.name, callback);
+        }
+
+        callback(err, res);
+    });
+};
+
+
 // Retrieves array of objects describing the teams in a given arena ladder
 armory.ladder = function(options, callback) {
     var path = '/pvp/arena/' + options.battlegroup + '/' + options.name;
@@ -215,8 +233,8 @@ armory.realmStatus = function(options, callback) {
 });
 
 
-// Export quest and item API
-['item', 'quest', 'recipe'].forEach(function(method) {
+// Export quest and recipe API
+['quest', 'recipe'].forEach(function(method) {
     armory[method] = function(options, callback) {
         var path = '/' + method + '/' + options.name;
         this._get(path, options, callback);

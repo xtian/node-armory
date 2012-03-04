@@ -5,6 +5,9 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's [RES
 ## Installation
 
     npm install armory
+    npm install wowhead  # optional
+
+If the [wowhead](http://github.com/xtian/node-wowhead) module is installed, it will be used as a fallback [when item requests fail](http://us.battle.net/wow/en/forum/topic/3657606329).
 
 
 ## Documentation
@@ -153,6 +156,10 @@ Retrieves an object containing data about a recipe.
             }
         });
     });
+
+Additional options:
+
+* `fallback`: Setting to `false` disables Wowhead fallback.
 
 [Item API Documentation](http://blizzard.github.com/api-wow-docs/#id3382086)
 
