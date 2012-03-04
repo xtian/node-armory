@@ -1,19 +1,50 @@
 var request = require('request'),
     crypto = require('crypto');
 
-exports.defaultRegion = 'us';
-exports.privateKey = exports.publicKey = null;
+var armory = { privateKey: null, publicKey: null };
 
-// Makes request
-function get(path, options, callback) {
-    var headers = { 'Connection': 'keep-alive' },
-        uri;
 
-    if (typeof options === 'function') {
-        callback = options;
-        options = {};
+function initParams(fn, context) {
+    return function(options, callback) {
+        if (typeof options === 'function') {
+            callback = options;
+            options = {};
+
+        } else if (typeof options !== 'object' || Array.isArray(options)) {
+            options = { name: options };
+        } else {
+            options.name = options.name || options.id;
+        }
+
+        options.query = [];
+        fn.call(context, options, callback);
+    };
+}
+
+
+// Returns a new instance of the module with a wrapper applied.
+function wrap(target, wrapper, context) {
+    var wrapped = {
+        privateKey: target.privateKey,
+        publicKey: target.publicKey,
+        defaults: target.defaults,
+        _get: target._get
+    };
+
+    for (var prop in target) {
+        if (wrapped[prop] === undefined) {
+            wrapped[prop] = wrapper(target[prop], context);
+        }
     }
 
+    return wrapped;
+}
+
+
+// Makes request
+armory._get = function(path, options, callback) {
+    var headers = { 'Connection': 'keep-alive' },
+        uri;
 
     // Handle full URLs
     if (path.indexOf('http://') === 0) {
@@ -21,15 +52,16 @@ function get(path, options, callback) {
         path = uri.split('battle.net')[1];
 
     } else {
-        options.region = options.region || exports.defaultRegion;
-        options.query = '?' + options.query.slice(0).join('&');
+        if (options.locale) {
+            options.query.push('locale=' + options.locale);
+        }
 
+        options.query = '?' + options.query.join('&');
         path = '/api/wow' + path;
 
         uri = encodeURI('http://' + options.region + '.battle.net' + path +
             options.query);
     }
-
 
     // Last-Modified
     if (options.lastModified) {
@@ -37,10 +69,9 @@ function get(path, options, callback) {
             .toUTCString();
     }
 
-
     // Authentication
-    if (exports.privateKey && exports.publicKey) {
-        var signature = crypto.createHmac('sha1', exports.privateKey);
+    if (this.privateKey && this.publicKey) {
+        var signature = crypto.createHmac('sha1', this.privateKey);
 
         signature.update(
             'GET\n' +
@@ -48,10 +79,9 @@ function get(path, options, callback) {
             path + '\n'
         );
 
-        headers['Authorization'] = 'BNET ' + exports.publicKey + ':' +
+        headers['Authorization'] = 'BNET ' + this.publicKey + ':' +
             signature.digest('base64');
     }
-
 
     request({ uri: uri, headers: headers }, function(err, res, body) {
         if (err || !body) {
@@ -71,233 +101,90 @@ function get(path, options, callback) {
 
         callback(null, body);
     });
-}
-
-
-function clone(obj) {
-    var ret = {};
-
-    for (var prop in obj) {
-        if (obj.hasOwnProperty(prop)) {
-            ret[prop] = obj[prop];
-        }
-    }
-
-    return ret;
-}
-
-
-// Parse arguments into an options object
-function parseArgs(args, params) {
-    args = Array.prototype.slice.call(args);
-
-    var callback = args.pop(),
-        options;
-
-    // Return object if given
-    if (typeof args[0] === 'object' && !Array.isArray(args[0])) {
-        options = args[0];
-
-        options.names = options.names || options.ids || '';
-        options.callback = callback;
-        options.query = [];
-
-    } else {
-        options = {
-            names: args.shift(),
-            callback: callback,
-            query: []
-        };
-
-        // Extra parameters
-        if (Array.isArray(params)) {
-            for (var i = 0, len = params.length; i < len; i++) {
-                options[params[i]] = args.shift();
-            }
-        }
-
-        // Region
-        if (args[0] && args[0].length === 2) {
-            options.region = args.shift();
-        }
-
-        // Locale
-        if (args[0]) {
-            options.locale = args[0];
-        }
-    }
-
-
-    if (options.locale) {
-        options.query.push('locale=' + options.locale);
-    }
-
-    return options;
-}
-
-
-// Requests one or more API resources in the form "/method/realm/name"
-function resource(method, args) {
-    var options = parseArgs(args),
-        callback = options.callback,
-        path = [method, options.realm, options.size];
-
-
-    if (Array.isArray(options.fields)) {
-        options.query.push('fields=' + options.fields.join());
-    }
-
-
-    var parse = function(name) {
-        var parseOptions = clone(options),
-            parsePath = path.slice(0);
-
-        // If path elements passed with name
-        if (name.indexOf('_') !== -1) {
-
-            name = name.split('_').reverse();
-
-            // Name
-            parsePath.push(name.pop());
-
-            // Realm
-            if (name[0] && name[0].length > 3) {
-                parsePath[1] = name.shift();
-            }
-
-            // Team size
-            if (name[0]) {
-                parsePath[2] = name[0];
-            }
-
-        } else if (options.realm) {
-            parsePath.push(name);
-
-        } else {
-            return callback(new Error('No realm provided for ' + name + '.'));
-        }
-
-        // Remove empty parsePath elements
-        parsePath = '/' + parsePath.filter(function(el) {
-            return !!el;
-        }).join('/');
-
-        get(parsePath, parseOptions, callback);
-    };
-
-
-    if (Array.isArray(options.names)) {
-        options.names.forEach(parse);
-    } else {
-        parse(options.names);
-    }
-}
-
-
-// Returns array of auction data file URLs
-exports.auction = function() {
-    var options = parseArgs(arguments),
-        callback = options.callback,
-        path = '/auction/data/';
-
-    delete options.callback;
-
-    var parse = function(realm) {
-        var parseOptions = clone(options);
-
-        get(path + realm, parseOptions, function(err, res) {
-            if (err || !res) {
-                return callback(err);
-            }
-
-            callback(null, res.files);
-        });
-    };
-
-
-    if (Array.isArray(options.names)) {
-        options.names.forEach(parse);
-    } else {
-        parse(options.names);
-    }
 };
 
 
-// Returns auction data dump from first file URL
-exports.auctionData = function() {
-    var options = parseArgs(arguments),
-        callback = options.callback;
+// Retrieves array of auction data file URLs
+armory.auction = function(options, callback) {
+    var path = '/auction/data/' + options.name;
+
+    this._get(path, options, function(err, res) {
+        if (err || !res) {
+            return callback(err);
+        }
+
+        callback(null, res.files);
+    });
+};
+
+
+// Retrieves auction data dump from first file URL
+armory.auctionData = function(options, callback) {
+    var self = this;
 
     var getData = function(err, res) {
         if (err || !res) {
             return callback(err);
         }
 
-        get(res[0].url, callback);
+        self._get(res[0].url, {}, callback);
     };
 
     this.auction.call(this, options, getData);
 };
 
 
-// Returns array of objects describing teams in a given arena ladder
-exports.ladder = function() {
-    var options = parseArgs(arguments, ['battlegroup']),
-        callback = options.callback,
-        path = '/pvp/arena/' + options.battlegroup + '/';
+// Returns new instance of module with default options applied to each method
+armory.defaults = function(defaults) {
+    defaults.name = defaults.name || defaults.id;
+    delete defaults.id;
 
-    delete options.callback;
+    var wrapper = function(fn) {
+        return initParams(function(options, callback) {
 
-    var parse = function(size) {
-        var parseOptions = clone(options);
-
-        get(path + size, parseOptions, function(err, res) {
-            if (err || !res) {
-                return callback(err);
+            for (var prop in defaults) {
+                if (options[prop] === undefined) {
+                    options[prop] = defaults[prop];
+                }
             }
 
-            callback(null, res.arenateam);
+            fn(options, callback);
         });
     };
 
-
-    if (Array.isArray(options.names)) {
-        options.names.forEach(parse);
-    } else {
-        parse(options.names);
-    }
+    return wrap(this, wrapper, this);
 };
 
 
-// Returns array of realm objects with status info
-exports.realmStatus = function() {
-    // Can't use parseArgs because all params are optional
-    var args = Array.prototype.slice.call(arguments),
-        callback = args.pop(),
-        options = { query: [] },
-        path = '/realm/status';
+// Retrieves array of objects describing the teams in a given arena ladder
+armory.ladder = function(options, callback) {
+    var path = '/pvp/arena/' + options.battlegroup + '/' + options.name;
+
+    this._get(path, options, function(err, res) {
+        if (err || !res) {
+            return callback(err);
+        }
+
+        callback(null, res.arenateam);
+    });
+};
+
+
+// Retrieves array of realm objects with status info
+armory.realmStatus = function(options, callback) {
+    var path = '/realm/status';
 
     // Multiple realms
-    if (Array.isArray(args[0])) {
-        args[0] = args[0].join('&realm=');
+    if (Array.isArray(options.name)) {
+        options.name = options.name.join('&realm=');
     }
 
     // Single realm or joined realms
-    if (args[0] && args[0].length > 2) {
-        options.query.push('realm=' + args.shift());
+    if (options.name) {
+        options.query.push('realm=' + options.name);
     }
 
-    // Region
-    if (args[0] && args[0].length === 2) {
-        options.region = args.shift();
-    }
-
-    // Locale
-    if (args[0]) {
-        options.query.push('locale=' + args[0]);
-    }
-
-    get(path, options, function(err, res) {
+    this._get(path, options, function(err, res) {
         if (err) {
             return callback(err);
         }
@@ -307,35 +194,32 @@ exports.realmStatus = function() {
 };
 
 
-// Export resource API
-['character', 'guild', 'arena'].forEach(function(method) {
-    exports[method] = function() {
-        resource(method, arguments);
+// Retrieves an API resource in the form "/method/realm/name"
+['arena', 'character', 'guild'].forEach(function(method) {
+    armory[method] = function(options, callback) {
+        if (Array.isArray(options.fields)) {
+            options.query.push('fields=' + options.fields.join());
+        }
+
+        var path = '/' + [
+            method,
+            options.realm,
+            options.size
+        ].filter(function(el) {
+            return !!el;
+
+        }).join('/') + '/' + options.name;
+
+        this._get(path, options, callback);
     };
 });
 
 
 // Export quest and item API
 ['item', 'quest', 'recipe'].forEach(function(method) {
-    exports[method] = function() {
-        var options = parseArgs(arguments),
-            callback = options.callback,
-            path = '/' + method + '/';
-
-        delete options.callback;
-
-        var parse = function(name) {
-            var parseOptions = clone(options);
-
-            get(path + name, parseOptions, callback);
-        };
-
-
-        if (Array.isArray(options.names)) {
-            options.names.forEach(parse);
-        } else {
-            parse(options.names);
-        }
+    armory[method] = function(options, callback) {
+        var path = '/' + method + '/' + options.name;
+        this._get(path, options, callback);
     };
 });
 
@@ -366,7 +250,7 @@ exports.realmStatus = function() {
         case 'characterAchievements':
         case 'guildAchievements':
             property = 'achievements';
-            path = method.replace('Ach', '/ach');
+            path = method.replace('A', '/a');
             break;
         default:
             path = method;
@@ -374,23 +258,8 @@ exports.realmStatus = function() {
 
     path = '/data/' + path + '/';
 
-    exports[method] = function() {
-        // Can't use parseArgs because all params are optional
-        var args = Array.prototype.slice.call(arguments),
-            callback = args.pop(),
-            options = { query: [] };
-
-        // Region
-        if (args[0] && args[0].length === 2) {
-            options.region = args.shift();
-        }
-
-        // Locale
-        if (args[0]) {
-            options.query.push('locale=' + args[0]);
-        }
-
-        get(path, options, function(err, res) {
+    armory[method] = function(options, callback) {
+        this._get(path, options, function(err, res) {
             if (err) {
                 return callback(err);
             }
@@ -399,3 +268,6 @@ exports.realmStatus = function() {
         });
     };
 });
+
+
+module.exports = wrap(armory, initParams, armory);
