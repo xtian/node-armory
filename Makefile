@@ -1,6 +1,6 @@
 
 test:
-	@nodeunit tests
+	node_modules/.bin/nodeunit tests
 
 lint:
-	@jshint index.js ./tests/
+	node_modules/.bin/jshint index.js ./tests/
