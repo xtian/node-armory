@@ -1,5 +1,5 @@
 var test = require('tap').test,
-    armory = require('../').defaults({ region: 'us' });
+    armory = require('../').defaults({ region: 'us', fallback: false });
 
 test('single item', function(test) {
     armory.item(27987, function(err, item) {
@@ -13,6 +13,15 @@ test('single item', function(test) {
 test('non-existent item', function(test) {
     armory.item(0, function(err, item) {
         test.ok(err);
+        test.end();
+    });
+});
+
+test('4.3 item', function(test) {
+    armory.item({ id: 72829, fallback: true }, function(err, item) {
+        test.error(err);
+        test.ok(item);
+        test.equal(item.id, 72829);
         test.end();
     });
 });
