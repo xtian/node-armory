@@ -10,96 +10,93 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's [RES
 ## Documentation
 
 
-All options objects can have the following properties:
+Except for the static APIs, all options objects can have the following properties:
 
-* `names`|`ids`
-* `region` _(optional)_
-* `locale` _(optional)_
+* `name`|`id`
 * `lastModified` _(optional)_
+* `locale` _(optional)_
+* `region`
 
-Note: `names` and `ids` are interchangeable, and `locale` and `lastModified` do not affect all API methods.
+Note: `name` and `id` are interchangeable, and `locale` and `lastModified` do not affect all API methods.
 
 ***
 ### auction(options, callback)
-### auction(realms, [region, locale,] callback)
 Retrieves an array of auction data URLs.
 
 ### auctionData(options, callback)
-### auctionData(realms, [region, locale,] callback)
 Retrieves an object of data from the first auction data URL provided by the API.
 
-    armory.auctionData('Shadowmoon', function(err, res) {
+    armory.auctionData({ name: 'Shadowmoon', region: 'us' }, function(err, res) {
 
         var agiPots = res.alliance.auctions.filter(function(auction) {
             return auction.item === 58145;
         });
     });
 
-The first argument can be a string, an array, or an object.
-
 [Auction API Documentation](http://blizzard.github.com/api-wow-docs/#id3381986)
 
 
 ***
 ### arena(options, callback)
-### arena('Name\_Size\_Realm', [region, locale,] callback)
 Retrieves an object containing data about an arena team.
 
-    armory.arena('No Dairy_2v2_Shadowmoon', function(err, team) {
+    armory.arena({
+        name: 'No Dairy',
+        size: '2v2',
+        realm: 'Shadowmoon',
+        region: 'us'
 
+    }, function(err, team) {
         var ratio = team.gamesWon / team.gamesLost;
     });
 
-`options` can be a string in the form `'Name_Size_Realm'` or an object with the following additional properties:
+Additional options:
 
-* `size` _(optional)_
-* `realm` _(optional)_
-
-Strings in the form `'Name_Size_Realm'`, `'Name_Size'`, or `'Name_Realm'` can be used in the `names` property. Parameters specified in these strings will override those provided in the `options` object.
+* `realm`
+* `size`
 
 [Arena Team API Documentation](http://blizzard.github.com/api-wow-docs/#id3382144)
 
 ***
 ### character(options, callback)
-### character('Name\_Realm', [region, locale,] callback)
 Retrieves an object containing data about a character.
 ### guild(options, callback)
-### guild('Name\_Realm', [region, locale,] callback)
 Retrieves an object containing data about a guild.
 
+    var armory = require('armory').defaults({
+        realm: 'Shadowmoon',
+        region: 'us'
+    });
+
     armory.guild({
-        names: 'The Gentlemens Club',
-        fields: ['members'],
-        realm: 'Shadowmoon'
+        name: 'The Gentlemens Club',
+        fields: ['members']
 
     }, function(err, guild) {
 
-        var dwarves = guild.members.filter(function(member) {
+        var dwarvenHairColors = [];
+
+        guild.members.filter(function(member) {
             return member.character.race === 3;
 
         }).map(function(member) {
             return member.character.name;
-        });
 
-        var hairColors = [];
+        }).forEach(function(dwarf) {
+            armory.character({
+                name: dwarf,
+                fields: ['appearance']
 
-        armory.character({
-            names: dwarves,
-            fields: ['appearance'],
-            realm: 'Shadowmoon'
-
-        }, function(err, character) {
-            if (err) return;
-            hairColors.push(character.appearance.hairColor);
+            }, function(err, character) {
+                hairColors.push(character.appearance.hairColor);
+            });
         });
     });
 
-`options` can be a string in the form `'Name_Realm'` or an object with the following additional properties:
+Additional options:
 
 * `fields` _(optional)_: must be an array
-* `realm` _(optional)_
-
-Strings in the form `'Name_Realm'` can be used in the `names` property. Parameters specified in these strings will override those provided in the `options` object.
+* `realm`
 
 [Character API Documentation](http://blizzard.github.com/api-wow-docs/#id3380312)
 
@@ -107,95 +104,124 @@ Strings in the form `'Name_Realm'` can be used in the `names` property. Paramete
 
 
 ***
+### defaults(options)
+Returns a new instance of the module where all options will default to the provided values. If the first argument of a method is a number or string, it will be used as the `name` option.
+
+    var armory = require('armory').defaults({
+        name: 'Dargonaut',
+        realm: 'Shadowmoon',
+        region: 'us'
+    });
+
+    armory.character(function(err, character) {
+        console.log(character.name);
+    });
+
+    armory.character('Dewbaca', function(err, character) {
+        console.log(character.name);
+    });
+
+    armory.character({
+        name: 'Talent',
+        realm: 'Lightbringer'
+
+    }, function(err, character) {
+        console.log(character.name);
+    });
+
+
+***
 ### item(options, callback)
-### item(ids, [region, locale,] callback)
 Retrieves an object containing data about an item.
 ### quest(options, callback)
-### quest(ids, [region, locale,] callback)
 Retrieves an object containing data about a quest.
 ### recipe(options, callback)
-### recipe(ids, [region, locale,] callback)
 Retrieves an object containing data about a recipe.
+
+    var armory = require('armory').defaults({ region: 'us' });
 
     var avgILvl = 0,
         i = 0;
 
-    armory.item([28275, 27903, 28041], function(err, item) {
-        avgILvl += item.itemLevel;
-        i++;
+    [28275, 27903, 28041].forEach(function(id) {
+        armory.item(id, function(err, item) {
+            avgILvl += item.itemLevel;
+            i++;
 
-        if (i === 3) {
-            avgILvl /= 3;
-        }
+            if (i === 3) {
+                avgILvl /= 3;
+            }
+        });
     });
-
-The first argument can be a single item ID, an array of IDs, or an object.
 
 [Item API Documentation](http://blizzard.github.com/api-wow-docs/#id3382086)
 
 
 ***
 ### ladder(options, callback)
-### ladder(sizes, battlegroup, [region, locale,] callback)
 Retrieves an array of objects containing data about arena teams for the given ladder and battlegroup.
 
-    armory.ladder('2v2', 'Vindication', function(err, ladder) {
+    armory.ladder({
+        id: '2v2',
+        battlegroup: 'Vindication',
+        region: 'us'
+
+    }, function(err, ladder) {
 
         var factionCount = ladder.reduce(function(array, team) {
             array[team.side === 'alliance' ? 0 : 1]++;
             return array;
-        }, [0, 0])
+        }, [0, 0]);
     });
 
-The first argument can be a single ladder type, an array of ladder types, or an object with the following additional properties:
+Additional options:
 
 * `battlegroup`
 
 
 ***
-### realmStatus([realms, region, locale,] callback)
+### realmStatus(options, callback)
 Retrieves an array containing the status of one or more realms.
 
-    armory.realmStatus(function(err, realms) {
+    armory.realmStatus({ region: 'us' }, function(err, realms) {
 
         var queued = realms.filter(function(realm) {
             return realm.queue;
         });
     });
 
-A realm name or array of realm names can be passed as the first argument. If no names are provided, the status of all realms will be returned.
+A single realm name or an array of realm names can be passed. If no names are provided, the status of all realms will be returned.
 
 [Realm Status API Documentation](http://blizzard.github.com/api-wow-docs/#id3381933)
 
 
 ***
-### battlegroups([region, locale,] callback)
+### battlegroups(options, callback)
 Retrieves a static array of all battlegroup names.
-### characterAchievements([region, locale,] callback)
+### characterAchievements(options, callback)
 Retrieves a static array of all character achievements.
-### classes([region, locale,] callback)
+### classes(options, callback)
 Retrieves a static array of data about character classes.
-### guildAchievements([region, locale,] callback)
+### guildAchievements(options, callback)
 Retrieves a static array of all guild achievements.
-### perks([region, locale,] callback)
+### perks(options, callback)
 Retrieves a static array of data about guild perks.
-### races([region, locale,] callback)
+### races(options, callback)
 Retrieves a static array of data about character races.
-### rewards([region, locale,] callback)
+### rewards(options, callback)
 Retrieves a static array of data about guild rewards.
 
-    armory.classes('es_MX', function(err, res) {
+    armory.classes({ region: 'us', locale: 'es_MX' }, function(err, res) {
         console.log('Yo puede jugar un ' + res[9].name);
     });
+
+`id` and `name` are not used by these methods.
 
 [Data API Documentation](http://blizzard.github.com/api-wow-docs/#id3382202)
 
 
 ***
 ### Properties
-#### defaultRegion
-The region to use if none is specified. `'us'` by default.
-
 #### publicKey, privateKey
 Keys to use for generating an authorization header.
 
@@ -205,6 +231,5 @@ Keys to use for generating an authorization header.
 ### Notes on usage:
 
 * If an error occurs (including API errors), it will be passed as an Error object to the first argument of the callback with its message in the `message` property. Otherwise, the API response will passed as the second argument.
-* Except for `realmStatus()`, all methods invoke the callback once for each resource requested.
 * `lastModified` must be a GMT Unix timestamp. If the requested resource has not been modified since the time of `lastModifed`, the callback will be invoked with both arguments empty.
 * [Locale documentation](http://blizzard.github.com/api-wow-docs/#id3379677).
