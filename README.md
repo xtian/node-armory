@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/xtian/node-armory.png)](http://travis-ci.org/xtian/node-armory)
 # node-armory
 
 A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's [REST API for World of Warcraft](http://blizzard.github.com/api-wow-docs/).
