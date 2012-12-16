@@ -57,22 +57,6 @@ armory.auction = function(options, callback) {
 }
 
 
-// Retrieves auction data dump from first file URL
-armory.auctionData = function(options, callback) {
-  var self = this
-
-  var getData = function(err, res) {
-    if (err || !res) {
-      return callback(err)
-    }
-
-    self._get(res[0].url, {}, callback)
-  }
-
-  this.auction.call(this, options, getData)
-}
-
-
 // Returns new instance of module with default options applied to each method
 armory.defaults = function(defaults) {
   defaults.name = defaults.name || defaults.id
