@@ -42,6 +42,12 @@ armory._get = function(path, options, callback) {
   return request(options, cb)
 }
 
+// Retrieves an object describing an arena team.
+armory.arena = function(options, callback) {
+  var path = '/arena/' + [options.realm, options.size, options.id].join('/')
+  return this._get(path, options, callback)
+}
+
 
 // Retrieves array of auction data file URLs
 armory.auction = function(options, callback) {
@@ -132,7 +138,7 @@ armory.realmStatus = function(options, callback) {
 
 
 // Retrieves an API resource in the form "/method/realm/name"
-;['arena', 'character', 'guild'].forEach(function(method) {
+;['character', 'guild'].forEach(function(method) {
   armory[method] = function(options, callback) {
     if (Array.isArray(options.fields)) {
       options.query.push('fields=' + options.fields.join())
