@@ -73,6 +73,12 @@ armory.battlePetStats = function(options, callback) {
   return this._get(path, options, callback)
 }
 
+// Retrieves an array of challenge mode leaderboard information.
+armory.challengeRegion = function(options, callback) {
+  options.id = 'region'
+  return this.challenge.apply(this, arguments)
+}
+
 // Returns new instance of module with default options applied to each method.
 armory.defaults = function(defaults) {
   defaults.name = defaults.name || defaults.id
