@@ -1,10 +1,6 @@
 var request = require('request')
   , crypto = require('crypto')
 
-try {
-  var wowhead = require('wowhead')
-} catch (e) {}
-
 var armory = { privateKey: null, publicKey: null }
 
 // Makes request
