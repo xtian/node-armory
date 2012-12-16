@@ -64,6 +64,15 @@ armory.arenaLadder = function(options, callback) {
   return this._get(path, options, cb)
 }
 
+// Retrieves object describing a battle pet.
+armory.battlePetStats = function(options, callback) {
+  var path = '/battlePet/stats/' + options.id
+
+  options.query = buildQuery(['breedId', 'level', 'qualityId'], options)
+
+  return this._get(path, options, callback)
+}
+
 // Retrieves array of auction data file URLs
 armory.auction = function(options, callback) {
   var path = '/auction/data/' + options.name
