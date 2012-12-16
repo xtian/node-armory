@@ -3,66 +3,43 @@ var request = require('request')
 
 var armory = { privateKey: null, publicKey: null }
 
-// Makes request
+// Makes the request.
 armory._get = function(path, options, callback) {
-  var headers = { 'Connection': 'keep-alive' }
-    , uri
+  options.headers = options.headers || {}
+  options.jar = false
+  options.json = true
 
-  // Handle full URLs
-  if (path.indexOf('http://') === 0) {
-    uri = path
-    path = uri.split('battle.net')[1]
+  path = '/api/wow' + path
 
-  } else {
-    if (options.locale) {
-      options.query.push('locale=' + options.locale)
-    }
+  if (options.locale) { options.query.push('locale=' + options.locale) }
+  if (!options.region) { throw new Error('region must be provided') }
 
-    options.query = '?' + options.query.join('&')
-    path = '/api/wow' + path
+  options.query = options.query.length ? '?' + options.query.join('&') : ''
 
-    uri = encodeURI('http://' + options.region + '.battle.net' + path +
-      options.query)
-  }
-
-  // Last-Modified
-  if (options.lastModified) {
-    headers['If-Modified-Since'] = new Date(options.lastModified)
-      .toUTCString()
-  }
+  options.uri = 'http://' + options.region + '.battle.net' + path
+  options.uri = encodeURI(options.uri + options.query)
 
   // Authentication
   if (this.privateKey && this.publicKey) {
     var signature = crypto.createHmac('sha1', this.privateKey)
 
-    signature.update(
-      'GET\n' +
-      new Date().toUTCString() + '\n' +
-      path + '\n'
-    )
+    signature.update(['GET', new Date().toUTCString(), path].join('\n') + '\n')
 
-    headers['Authorization'] = 'BNET ' + this.publicKey + ':' +
+    options.headers['Authorization'] = 'BNET ' + this.publicKey + ':' +
       signature.digest('base64')
   }
 
-  request({ uri: uri, headers: headers }, function(err, res, body) {
-    if (err || !body) {
-
-      if (res && res.statusCode !== 304) {
-        err = err || new Error(res.statusCode)
+  if (callback) {
+    var cb = function(err, res, body) {
+      if (body && body.status === 'nok') {
+        err = err || new Error(body.reason)
       }
 
-      return callback(err)
+      callback.call(this, err, body, res)
     }
+  }
 
-    body = JSON.parse(body)
-
-    if (body.status === 'nok') {
-      return callback(new Error(body.reason))
-    }
-
-    callback(null, body)
-  })
+  return request(options, cb)
 }
 
 
