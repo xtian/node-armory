@@ -137,23 +137,20 @@ armory.realmStatus = function(options, callback) {
 }
 
 
-// Retrieves an API resource in the form "/method/realm/name"
+// Retrieves an object describing a character or guild.
 ;['character', 'guild'].forEach(function(method) {
   armory[method] = function(options, callback) {
     if (Array.isArray(options.fields)) {
       options.query.push('fields=' + options.fields.join())
     }
 
-    var path = '/' + [
-      method
-    , options.realm
-    , options.size
-    ].filter(function(el) {
-      return !!el
+    if (options.lastModified) {
+      options.headers['If-Modified-Since'] = new Date(options.lastModified)
+        .toUTCString()
+    }
 
-    }).join('/') + '/' + options.name
-
-    this._get(path, options, callback)
+    var path = '/' + [method, options.realm, options.id].join('/')
+    return this._get(path, options, callback)
   }
 })
 
