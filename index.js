@@ -122,6 +122,21 @@ armory.item = function(options, callback) {
   })
 }
 
+// Retrieves an array of rated battleground ladder information.
+armory.rbgLadder = function(options, callback) {
+  var path = '/pvp/ratedbg/ladder'
+
+  options.query = buildQuery(['asc', 'page', 'size'], options)
+
+  if (callback) {
+    var cb = function(err, body, res) {
+      var data = getKey(body, 'bgRecord')
+      callback.call(this, err, data, res)
+    }
+  }
+
+  return this._get(path, options, cb)
+}
 
 // Retrieves array of realm objects with status info
 armory.realmStatus = function(options, callback) {
