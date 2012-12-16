@@ -11,13 +11,13 @@ armory._get = function(path, options, callback) {
 
   path = '/api/wow' + path
 
-  if (options.locale) { options.query.push('locale=' + options.locale) }
+  if (options.locale) { options._query.push('locale=' + options.locale) }
   if (!options.region) { throw new Error('region must be provided') }
 
-  options.query = options.query.length ? '?' + options.query.join('&') : ''
+  options._query = options._query.length ? '?' + options._query.join('&') : ''
 
   options.uri = 'http://' + options.region + '.battle.net' + path
-  options.uri = encodeURI(options.uri + options.query)
+  options.uri = encodeURI(options.uri + options._query)
 
   // Authentication
   if (this.privateKey && this.publicKey) {
@@ -52,7 +52,7 @@ armory.arena = function(options, callback) {
 armory.arenaLadder = function(options, callback) {
   var path = '/pvp/arena/' + options.battlegroup + '/' + options.id
 
-  options.query = buildQuery(['asc', 'page', 'size'], options)
+  options._query = buildQuery(['asc', 'page', 'size'], options)
 
   if (callback) {
     var cb = function(err, body, res) {
@@ -68,7 +68,7 @@ armory.arenaLadder = function(options, callback) {
 armory.battlePetStats = function(options, callback) {
   var path = '/battlePet/stats/' + options.id
 
-  options.query = buildQuery(['breedId', 'level', 'qualityId'], options)
+  options._query = buildQuery(['breedId', 'level', 'qualityId'], options)
 
   return this._get(path, options, callback)
 }
@@ -104,7 +104,7 @@ armory.defaults = function(defaults) {
 armory.rbgLadder = function(options, callback) {
   var path = '/pvp/ratedbg/ladder'
 
-  options.query = buildQuery(['asc', 'page', 'size'], options)
+  options._query = buildQuery(['asc', 'page', 'size'], options)
 
   if (callback) {
     var cb = function(err, body, res) {
@@ -127,7 +127,7 @@ armory.realmStatus = function(options, callback) {
 
   // Single realm or joined realms
   if (options.id) {
-    options.query.push('realm=' + options.id)
+    options._query.push('realm=' + options.id)
   }
 
   if (callback) {
@@ -144,7 +144,7 @@ armory.realmStatus = function(options, callback) {
 ;['character', 'guild'].forEach(function(method) {
   armory[method] = function(options, callback) {
     if (Array.isArray(options.fields)) {
-      options.query.push('fields=' + options.fields.join())
+      options._query.push('fields=' + options.fields.join())
     }
 
     if (options.lastModified) {
@@ -229,7 +229,7 @@ function initParams(fn, context) {
       options.name = options.name || options.id
     }
 
-    options.query = []
+    options._query = []
     fn.call(context, options, callback)
   }
 }
