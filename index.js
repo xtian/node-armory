@@ -7,44 +7,6 @@ try {
 
 var armory = { privateKey: null, publicKey: null }
 
-
-function initParams(fn, context) {
-  return function(options, callback) {
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-
-    } else if (typeof options !== 'object' || Array.isArray(options)) {
-      options = { name: options }
-    } else {
-      options.name = options.name || options.id
-    }
-
-    options.query = []
-    fn.call(context, options, callback)
-  }
-}
-
-
-// Returns a new instance of the module with a wrapper applied.
-function wrap(target, wrapper, context) {
-  var wrapped = {
-    privateKey: target.privateKey
-  , publicKey: target.publicKey
-  , defaults: target.defaults
-  , _get: target._get
-  }
-
-  for (var prop in target) {
-    if (wrapped[prop] === undefined) {
-      wrapped[prop] = wrapper(target[prop], context)
-    }
-  }
-
-  return wrapped
-}
-
-
 // Makes request
 armory._get = function(path, options, callback) {
   var headers = { 'Connection': 'keep-alive' }
@@ -286,5 +248,39 @@ armory.realmStatus = function(options, callback) {
   }
 })
 
+// Returns a new instance of the module with a wrapper applied.
+function wrap(target, wrapper, context) {
+  var wrapped = {
+    privateKey: target.privateKey
+  , publicKey: target.publicKey
+  , defaults: target.defaults
+  , _get: target._get
+  }
+
+  for (var prop in target) {
+    if (wrapped[prop] === undefined) {
+      wrapped[prop] = wrapper(target[prop], context)
+    }
+  }
+
+  return wrapped
+}
+
+function initParams(fn, context) {
+  return function(options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
+
+    } else if (typeof options !== 'object' || Array.isArray(options)) {
+      options = { name: options }
+    } else {
+      options.name = options.name || options.id
+    }
+
+    options.query = []
+    fn.call(context, options, callback)
+  }
+}
 
 module.exports = wrap(armory, initParams, armory)
