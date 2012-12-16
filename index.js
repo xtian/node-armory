@@ -138,29 +138,29 @@ armory.rbgLadder = function(options, callback) {
   return this._get(path, options, cb)
 }
 
-// Retrieves array of realm objects with status info
+// Retrieves array of realm status information.
 armory.realmStatus = function(options, callback) {
   var path = '/realm/status'
 
   // Multiple realms
-  if (Array.isArray(options.name)) {
-    options.name = options.name.join('&realm=')
+  if (Array.isArray(options.id)) {
+    options.id = options.id.join('&realm=')
   }
 
   // Single realm or joined realms
-  if (options.name) {
-    options.query.push('realm=' + options.name)
+  if (options.id) {
+    options.query.push('realm=' + options.id)
   }
 
-  this._get(path, options, function(err, res) {
-    if (err) {
-      return callback(err)
+  if (callback) {
+    var cb = function(err, body, res) {
+      var data = getKey(body, 'realms')
+      callback.call(this, err, data, res)
     }
+  }
 
-    callback(null, res.realms)
-  })
+  return this._get(path, options, cb)
 }
-
 
 // Retrieves an object describing a character or guild.
 ;['character', 'guild'].forEach(function(method) {
