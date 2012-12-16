@@ -1,5 +1,6 @@
 var request = require('request')
   , crypto = require('crypto')
+  , url = require('url')
 
 var armory = { privateKey: null, publicKey: null }
 
@@ -11,13 +12,15 @@ armory._get = function(path, options, callback) {
 
   path = '/api/wow' + path
 
-  if (options.locale) { options._query.push('locale=' + options.locale) }
+  if (options.locale) { options._query.locale = options.locale }
   if (!options.region) { throw new Error('region must be provided') }
 
-  options._query = options._query.length ? '?' + options._query.join('&') : ''
-
-  options.uri = 'http://' + options.region + '.battle.net' + path
-  options.uri = encodeURI(options.uri + options._query)
+  options.uri = url.format({
+    protocol: 'http:'
+  , hostname: options.region + '.battle.net'
+  , pathname: path
+  , query: options._query
+  })
 
   // Authentication
   if (this.privateKey && this.publicKey) {
@@ -74,7 +77,7 @@ armory.battlePetStats = function(options, callback) {
 }
 
 // Retrieves an array of challenge mode leaderboard information.
-armory.challengeRegion = function(options, callback) {
+armory.challengeRegion = function(options) {
   options.id = 'region'
   return this.challenge.apply(this, arguments)
 }
@@ -120,15 +123,7 @@ armory.rbgLadder = function(options, callback) {
 armory.realmStatus = function(options, callback) {
   var path = '/realm/status'
 
-  // Multiple realms
-  if (Array.isArray(options.id)) {
-    options.id = options.id.join('&realm=')
-  }
-
-  // Single realm or joined realms
-  if (options.id) {
-    options._query.push('realm=' + options.id)
-  }
+  if (options.id) { options._query.realm = options.id }
 
   if (callback) {
     var cb = function(err, body, res) {
@@ -143,9 +138,7 @@ armory.realmStatus = function(options, callback) {
 // Retrieves an object describing a character or guild.
 ;['character', 'guild'].forEach(function(method) {
   armory[method] = function(options, callback) {
-    if (Array.isArray(options.fields)) {
-      options._query.push('fields=' + options.fields.join())
-    }
+    if (options.fields) { options._query.fields = options.fields }
 
     if (options.lastModified) {
       options.headers['If-Modified-Since'] = new Date(options.lastModified)
@@ -183,11 +176,13 @@ require('./methods').forEach(function(definition) {
 
 // Returns array of query-string parameters from options.
 function buildQuery(params, options) {
-  return params.map(function(param) {
+  return params.reduce(function(obj, param) {
     if (options[param] != null) {
-      return param + '=' + options[param]
+      obj[param] = options[param]
     }
-  })
+
+    return obj
+  }, {})
 }
 
 // Returns the value of an object's key if it exists.
@@ -229,7 +224,7 @@ function initParams(fn, context) {
       options.name = options.name || options.id
     }
 
-    options._query = []
+    options._query = {}
     fn.call(context, options, callback)
   }
 }
