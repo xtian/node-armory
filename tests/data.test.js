@@ -1,49 +1,32 @@
-var test = require('tap').test,
-    armory = require('../').defaults({ region: 'us' });
+var test = require('tap').test
+  , armory = require('../')
 
-test('region', function(test) {
-    armory.races({ region: 'eu' }, function(err, races) {
-        test.error(err);
-        test.ok(Array.isArray(races));
-        test.ok(races.length);
-        test.end();
-    });
-});
+var Stream = require('stream').Stream
 
-test('locale', function(test) {
-    armory.races({ locale: 'es_MX' }, function(err, races) {
-        test.error(err);
-        test.ok(Array.isArray(races));
-        test.ok(races.length);
-        test.equal(races[0].name, 'Humano');
-        test.end();
-    });
-});
+var options = { region: 'us' }
 
-test('region and locale', function(test) {
-    armory.races({ region: 'eu', locale: 'de_DE' }, function(err, races) {
-        test.error(err);
-        test.ok(Array.isArray(races));
-        test.ok(races.length);
-        test.equal(races[1].name, 'Mensch');
-        test.end();
-    });
-});
+;['battlegroups'
+, 'characterAchievements'
+, 'classes'
+, 'guildAchievements'
+, 'perks'
+, 'races'
+, 'rewards'
+].forEach(function(method) {
 
-test('battlegroups', function(test) {
-    armory.battlegroups(function(err, results) {
-       test.error(err);
-       test.ok(Array.isArray(results));
-       test.ok(results.length);
-       test.end();
-    });
-});
+  test(method + ' should build correct url and output', function(t) {
+    armory[method](options, function(err, body, res) {
+      t.notOk(err, 'no error returned')
+      t.type(body, Array, 'returned an array')
+      t.equal(res.statusCode, 200, 'returned 200')
+      t.end()
+    })
+  })
 
-test('characterAcheivements', function(test) {
-    armory.characterAchievements(function(err, results) {
-       test.error(err);
-       test.ok(Array.isArray(results));
-       test.ok(results.length);
-       test.end();
-    });
-});
+  test(method + ' should return Stream if no callback is passed', function(t) {
+    var res = armory[method](options)
+
+    t.type(res, Stream, 'returned a Stream')
+    t.end()
+  })
+})

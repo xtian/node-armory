@@ -11,8 +11,8 @@
   }
 , "dependencies": { "request": "~2" }
 , "devDependencies":
-  { "jshint": ">= 1"
-  , "tap": ">= 0.4"
+  { "jshint": "~1"
+  , "tap": "~0.4"
   }
 , "scripts": { "test": "make test" }
 , "license": "MIT"

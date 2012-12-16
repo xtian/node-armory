@@ -1,142 +1,52 @@
-var test = require('tap').test,
-    armory = require('../').defaults({ region: 'us' });
+var test = require('tap').test
+  , armory = require('../')
 
-test('all US realms', function(test) {
-    armory.realmStatus(function(err, realms) {
-        test.error(err);
-        test.ok(Array.isArray(realms));
-        test.ok(realms.length > 1);
-        test.ok(realms[0].slug);
+var Stream = require('stream').Stream
 
-        test.end();
-    });
-});
+test('realmStatus', function(t) {
+  var options = { id: 'shadowmoon', region: 'us' }
 
-test('all US realms with locale', function(test) {
-    armory.realmStatus({ locale: 'es_MX' }, function(err, realms) {
-        test.error(err);
-        test.ok(Array.isArray(realms));
-        test.ok(realms.length > 1);
-        test.ok(realms[0].slug);
+  t.test('should build correct url and response', function(t) {
+    armory.realmStatus(options, function(err, body, res) {
+      t.notOk(err, 'no error returned')
 
-        test.end();
-    });
-});
+      t.equal(
+        res.req.path
+      , '/api/wow/realm/status?realm=shadowmoon'
+      , 'built api url'
+      )
 
-test('all EU realms', function(test) {
-    armory.realmStatus({ region: 'eu' }, function(err, realms) {
-        test.error(err);
-        test.ok(Array.isArray(realms));
-        test.ok(realms.length > 1);
-        test.ok(realms[0].slug);
+      t.equal(options._query.realm, 'shadowmoon', 'realm query param set')
+      t.equal(res.statusCode, 200, 'returned 200')
+      t.type(body, Array, 'returned an array')
+      t.equal(body.length, 1, 'returned one realm')
 
-        test.end();
-    });
-});
+      t.end()
+    })
+  })
 
-test('all EU realms with locale', function(test) {
-    armory.realmStatus({
-        region: 'eu',
-        locale: 'fr_FR'
+  t.test('should accept array of realms', function(t) {
+    var options = { id: ['shadowmoon', 'nazgrel'], region: 'us' }
 
-    }, function(err, realms) {
-        test.error(err);
-        test.ok(Array.isArray(realms));
-        test.ok(realms.length > 1);
-        test.ok(realms[0].slug);
+    armory.realmStatus(options, function(err, body) {
+      t.notOk(err, 'no error returned')
 
-        test.end();
-    });
-});
+      t.similar(
+        options._query.realm
+      , ['shadowmoon', 'nazgrel']
+      , 'realm query param set'
+      )
 
-test('single US realm', function(test) {
-    armory.realmStatus('Shadowmoon', function(err, realms) {
-        test.error(err);
-        test.ok(Array.isArray(realms));
+      t.type(body, Array, 'returned an array')
+      t.equal(body.length, 2, 'returned two realms')
+      t.end()
+    })
+  })
 
-        realms = realms[0];
-        test.equal(realms.name, 'Shadowmoon');
-        test.equal(realms.slug, 'shadowmoon');
+  t.test('should return a Stream if no callback is passed', function(t) {
+    var res = armory.realmStatus(options)
 
-        test.end();
-    });
-});
-
-test('single EU realm', function(test) {
-    armory.realmStatus({
-        name: 'Свежеватель Душ',
-        region: 'eu'
-
-    }, function(err, realms) {
-        test.error(err);
-        test.ok(Array.isArray(realms));
-
-        realms = realms[0];
-        test.equal(realms.name, 'Soulflayer');
-        test.equal(realms.slug, 'soulflayer');
-
-        test.end();
-    });
-});
-
-test('single EU realm with locale', function(test) {
-    armory.realmStatus({
-        name: 'Свежеватель Душ',
-        region: 'eu',
-        locale: 'ru_RU'
-
-    }, function(err, realms) {
-        test.error(err);
-        test.ok(Array.isArray(realms));
-
-        realms = realms[0];
-        test.equal(realms.name, 'Свежеватель Душ');
-        test.equal(realms.slug, 'свежеватель-душ');
-
-        test.end();
-    });
-});
-
-test('multiple US realms', function(test) {
-    armory.realmStatus(['Cho\'gall', 'Shadowmoon'], function(err, realms) {
-        test.error(err);
-        test.ok(Array.isArray(realms));
-        test.equal(realms.length, 2);
-
-        test.equal(realms[0].name, 'Shadowmoon');
-        test.equal(realms[0].slug, 'shadowmoon');
-        test.equal(realms[1].name, 'Cho\'gall');
-        test.equal(realms[1].slug, 'chogall');
-
-        test.end();
-    });
-});
-
-test('multiple EU realms', function(test) {
-    armory.realmStatus({
-        name: ['Свежеватель Душ', 'Festung der Stürme'],
-        region: 'eu'
-
-    }, function(err, realms) {
-
-        test.error(err);
-        test.ok(Array.isArray(realms));
-        test.equal(realms.length, 2);
-
-        test.equal(realms[0].name, 'Soulflayer');
-        test.equal(realms[0].slug, 'soulflayer');
-        test.equal(realms[1].name, 'Festung der Stürme');
-        test.equal(realms[1].slug, 'festung-der-sturme');
-
-        test.end();
-    });
-});
-
-test('non-existent realm', function(test) {
-    armory.realmStatus('foo', function(err, realms) {
-        test.error(err);
-        test.ok(realms.length > 1);
-
-        test.end();
-    });
-});
+    t.type(res, Stream)
+    t.end()
+  })
+})
