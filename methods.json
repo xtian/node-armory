@@ -1,0 +1,51 @@
+[ { "method": "achievement" }
+, { "method": "auction"
+  , "url": "auction/data"
+  , "key": "files"
+  }
+, { "method": "battlegroups"
+  , "url": "data/battlegroups"
+  , "key": "battlegroups"
+  , "trailingSlash": true
+  }
+, { "method": "battlePetAbility"
+  , "url": "battlePet/ability"
+  }
+, { "method": "battlePetSpecies"
+  , "url": "battlePet/species"
+  }
+, { "method": "challenge"
+  , "key": "challenge"
+  }
+, { "method": "characterAchievements"
+  , "url": "data/character/achievements"
+  , "key": "achievements"
+  }
+, { "method": "classes"
+  , "url": "data/character/classes"
+  , "key": "classes"
+  }
+, { "method": "guildAchievements"
+  , "url": "data/guild/achievements"
+  , "key": "achievements"
+  }
+, { "method": "item" }
+, { "method": "itemSet"
+  , "url": "item/set"
+  }
+, { "method": "perks"
+  , "url": "data/guild/perks"
+  , "key": "perks"
+  }
+, { "method": "quest" }
+, { "method": "races"
+  , "url": "data/character/races"
+  , "key": "races"
+  }
+, { "method": "recipe" }
+, { "method": "rewards"
+  , "url": "data/guild/rewards"
+  , "key": "rewards"
+  }
+, { "method": "spell" }
+]

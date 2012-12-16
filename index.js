@@ -73,21 +73,7 @@ armory.battlePetStats = function(options, callback) {
   return this._get(path, options, callback)
 }
 
-// Retrieves array of auction data file URLs
-armory.auction = function(options, callback) {
-  var path = '/auction/data/' + options.name
-
-  this._get(path, options, function(err, res) {
-    if (err || !res) {
-      return callback(err)
-    }
-
-    callback(null, res.files)
-  })
-}
-
-
-// Returns new instance of module with default options applied to each method
+// Returns new instance of module with default options applied to each method.
 armory.defaults = function(defaults) {
   defaults.name = defaults.name || defaults.id
   delete defaults.id
@@ -106,20 +92,6 @@ armory.defaults = function(defaults) {
   }
 
   return wrap(this, wrapper, this)
-}
-
-
-// Retrieves object describing an item with an optional fallback to Wowhead
-armory.item = function(options, callback) {
-  var path = '/item/' + options.name
-
-  this._get(path, options, function(err, res) {
-    if (err && wowhead && options.fallback !== false) {
-      return wowhead(options.name, callback)
-    }
-
-    callback(err, res)
-  })
 }
 
 // Retrieves an array of rated battleground ladder information.
@@ -179,57 +151,27 @@ armory.realmStatus = function(options, callback) {
   }
 })
 
+// Definitions for generic functions.
+require('./methods').forEach(function(definition) {
+  definition.url = definition.url || definition.method
 
-// Export quest and recipe API
-;['quest', 'recipe'].forEach(function(method) {
-  armory[method] = function(options, callback) {
-    var path = '/' + method + '/' + options.name
-    this._get(path, options, callback)
-  }
-})
+  armory[definition.method] = function(options, callback) {
+    var id = options.id ? '/' + options.id : ''
+      , path = '/' + definition.url + id
+      , cb
 
+    if (definition.trailingSlash) { path += '/' }
 
-// Export static data API
-;['battlegroups'
-, 'characterAchievements'
-, 'classes'
-, 'guildAchievements'
-, 'perks'
-, 'races'
-, 'rewards'
-
-].forEach(function(method) {
-  var property = method
-    , path
-
-  switch (method) {
-    case 'perks':
-    case 'rewards':
-      path = 'guild/' + method
-      break
-    case 'classes':
-    case 'races':
-      path = 'character/' + method
-      break
-    case 'characterAchievements':
-    case 'guildAchievements':
-      property = 'achievements'
-      path = method.replace('A', '/a')
-      break
-    default:
-      path = method
-  }
-
-  path = '/data/' + path + '/'
-
-  armory[method] = function(options, callback) {
-    this._get(path, options, function(err, res) {
-      if (err) {
-        return callback(err)
+    if (callback && definition.key) {
+      cb = function(err, body, res) {
+        var data = getKey(body, definition.key)
+        callback.call(this, err, data, res)
       }
+    } else {
+      cb = callback
+    }
 
-      callback(null, res[property])
-    })
+    return this._get(path, options, cb)
   }
 })
 
