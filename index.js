@@ -1,6 +1,7 @@
 var request = require('request')
   , crypto = require('crypto')
   , url = require('url')
+  , utils = require('./utils')
 
 var armory = { privateKey: null, publicKey: null }
 
@@ -55,11 +56,11 @@ armory.arena = function(options, callback) {
 armory.arenaLadder = function(options, callback) {
   var path = '/pvp/arena/' + options.battlegroup + '/' + options.id
 
-  options._query = buildQuery(['asc', 'page', 'size'], options)
+  options._query = utils.pick(options, ['asc', 'page', 'size'])
 
   if (callback) {
     var cb = function(err, body, res) {
-      var data = getKey(body, 'arenateam')
+      var data = utils.getKey(body, 'arenateam')
       callback.call(this, err, data, res)
     }
   }
@@ -71,7 +72,7 @@ armory.arenaLadder = function(options, callback) {
 armory.battlePetStats = function(options, callback) {
   var path = '/battlePet/stats/' + options.id
 
-  options._query = buildQuery(['breedId', 'level', 'qualityId'], options)
+  options._query = utils.pick(options, ['breedId', 'level', 'qualityId'])
 
   return this._get(path, options, callback)
 }
@@ -82,36 +83,38 @@ armory.challengeRegion = function(options) {
   return this.challenge.apply(this, arguments)
 }
 
-// Returns new instance of module with default options applied to each method.
+// Returns wrapped module where every method has default options applied
 armory.defaults = function(defaults) {
-  defaults.name = defaults.name || defaults.id
-  delete defaults.id
+  defaults.id = defaults.id || defaults.name
+  delete defaults.name
 
-  var wrapper = function(fn) {
-    return initParams(function(options, callback) {
-
-      for (var prop in defaults) {
-        if (options[prop] === undefined) {
-          options[prop] = defaults[prop]
-        }
+  var wrapped = utils.wrap(this, function(fn, context) {
+    return function(options, callback) {
+      if (options.toString() === '[object Object]') {
+        options = utils.merge(options, defaults)
+        return fn.call(context, options, callback)
       }
 
-      fn(options, callback)
-    })
-  }
+      return utils.initParams(function(options, callback) {
+        options = utils.merge(options, defaults)
+        return fn.call(context, options, callback)
 
-  return wrap(this, wrapper, this)
+      }, context)(options, callback)
+    }
+  })
+
+  return wrapped
 }
 
 // Retrieves an array of rated battleground ladder information.
 armory.rbgLadder = function(options, callback) {
   var path = '/pvp/ratedbg/ladder'
 
-  options._query = buildQuery(['asc', 'page', 'size'], options)
+  options._query = utils.pick(options, ['asc', 'page', 'size'])
 
   if (callback) {
     var cb = function(err, body, res) {
-      var data = getKey(body, 'bgRecord')
+      var data = utils.getKey(body, 'bgRecord')
       callback.call(this, err, data, res)
     }
   }
@@ -127,7 +130,7 @@ armory.realmStatus = function(options, callback) {
 
   if (callback) {
     var cb = function(err, body, res) {
-      var data = getKey(body, 'realms')
+      var data = utils.getKey(body, 'realms')
       callback.call(this, err, data, res)
     }
   }
@@ -163,7 +166,7 @@ require('./methods').forEach(function(definition) {
 
     if (callback && definition.key) {
       cb = function(err, body, res) {
-        var data = getKey(body, definition.key)
+        var data = utils.getKey(body, definition.key)
         callback.call(this, err, data, res)
       }
     } else {
@@ -174,59 +177,4 @@ require('./methods').forEach(function(definition) {
   }
 })
 
-// Returns array of query-string parameters from options.
-function buildQuery(params, options) {
-  return params.reduce(function(obj, param) {
-    if (options[param] != null) {
-      obj[param] = options[param]
-    }
-
-    return obj
-  }, {})
-}
-
-// Returns the value of an object's key if it exists.
-function getKey(obj, key) {
-  if (obj && obj[key] != null) {
-    return obj[key]
-  } else {
-    return obj
-  }
-}
-
-// Returns a new instance of the module with a wrapper applied.
-function wrap(target, wrapper, context) {
-  var wrapped = {
-    privateKey: target.privateKey
-  , publicKey: target.publicKey
-  , defaults: target.defaults
-  , _get: target._get
-  }
-
-  for (var prop in target) {
-    if (wrapped[prop] === undefined) {
-      wrapped[prop] = wrapper(target[prop], context)
-    }
-  }
-
-  return wrapped
-}
-
-function initParams(fn, context) {
-  return function(options, callback) {
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-
-    } else if (typeof options !== 'object' || Array.isArray(options)) {
-      options = { name: options }
-    } else {
-      options.name = options.name || options.id
-    }
-
-    options._query = {}
-    fn.call(context, options, callback)
-  }
-}
-
-module.exports = wrap(armory, initParams, armory)
+module.exports = utils.wrap(armory, utils.initParams)
