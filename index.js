@@ -48,6 +48,21 @@ armory.arena = function(options, callback) {
   return this._get(path, options, callback)
 }
 
+// Retrieves an array of arena ladder information.
+armory.arenaLadder = function(options, callback) {
+  var path = '/pvp/arena/' + options.battlegroup + '/' + options.id
+
+  options.query = buildQuery(['asc', 'page', 'size'], options)
+
+  if (callback) {
+    var cb = function(err, body, res) {
+      var data = getKey(body, 'arenateam')
+      callback.call(this, err, data, res)
+    }
+  }
+
+  return this._get(path, options, cb)
+}
 
 // Retrieves array of auction data file URLs
 armory.auction = function(options, callback) {
@@ -95,20 +110,6 @@ armory.item = function(options, callback) {
     }
 
     callback(err, res)
-  })
-}
-
-
-// Retrieves array of objects describing the teams in a given arena ladder
-armory.ladder = function(options, callback) {
-  var path = '/pvp/arena/' + options.battlegroup + '/' + options.name
-
-  this._get(path, options, function(err, res) {
-    if (err || !res) {
-      return callback(err)
-    }
-
-    callback(null, res.arenateam)
   })
 }
 
@@ -207,6 +208,24 @@ armory.realmStatus = function(options, callback) {
     })
   }
 })
+
+// Returns array of query-string parameters from options.
+function buildQuery(params, options) {
+  return params.map(function(param) {
+    if (options[param] != null) {
+      return param + '=' + options[param]
+    }
+  })
+}
+
+// Returns the value of an object's key if it exists.
+function getKey(obj, key) {
+  if (obj && obj[key] != null) {
+    return obj[key]
+  } else {
+    return obj
+  }
+}
 
 // Returns a new instance of the module with a wrapper applied.
 function wrap(target, wrapper, context) {
