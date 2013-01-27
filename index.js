@@ -26,9 +26,11 @@ armory._get = function(path, options, callback) {
   // Authentication
   if (this.privateKey && this.publicKey) {
     var signature = crypto.createHmac('sha1', this.privateKey)
+      , date = new Date().toUTCString()
 
-    signature.update(['GET', new Date().toUTCString(), path].join('\n') + '\n')
+    signature.update(['GET', date, path].join('\n') + '\n')
 
+    options.headers['Date'] = date
     options.headers['Authorization'] = 'BNET ' + this.publicKey + ':' +
       signature.digest('base64')
   }
