@@ -11,7 +11,7 @@ armory._get = function(path, options, callback) {
   options.jar = false
   options.json = true
 
-  path = '/api/wow' + path
+  path = encodeURI('/api/wow' + path)
 
   if (options.locale) { options._query.locale = options.locale }
   if (!options.region) { throw new Error('region must be provided') }
