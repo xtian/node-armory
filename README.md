@@ -163,8 +163,6 @@ Note: `id` and `name` are not used by these methods.
 #### publicKey, privateKey
 Keys to use for generating an authorization header.
 
-[Authentication Documentation](http://blizzard.github.com/api-wow-docs/#id3379854)
-
 ### Notes on usage:
 
 * If an error occurs (including API errors), it will be passed as an Error object to the first parameter of the callback with its message in the `message` property. Otherwise, the parsed response body will passed as the second parameter and the full response will be passed as the third parameter.
