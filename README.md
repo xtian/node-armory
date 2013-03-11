@@ -160,8 +160,15 @@ Note: `id` and `name` are not used by these methods.
 
 ***
 ### Properties
-#### publicKey, privateKey
+#### auth.publicKey, auth.privateKey
 Keys to use for generating an authorization header.
+
+    var armory = require('armory')
+
+    armory.auth.publicKey = 'foo'
+    armory.auth.privateKey = 'bar'
+
+    armory.realmStatus(function() { ... })
 
 ### Notes on usage:
 

@@ -3,7 +3,7 @@ var request = require('request')
   , url = require('url')
   , utils = require('./utils')
 
-var armory = { privateKey: null, publicKey: null }
+var armory = { auth: { privateKey: null, publicKey: null } }
 
 // Makes the request.
 armory._get = function(path, options, callback) {
@@ -24,14 +24,14 @@ armory._get = function(path, options, callback) {
   })
 
   // Authentication
-  if (this.privateKey && this.publicKey) {
-    var signature = crypto.createHmac('sha1', this.privateKey)
+  if (this.auth.privateKey && this.auth.publicKey) {
+    var signature = crypto.createHmac('sha1', this.auth.privateKey)
       , date = new Date().toUTCString()
 
     signature.update(['GET', date, path].join('\n') + '\n')
 
     options.headers['Date'] = date
-    options.headers['Authorization'] = 'BNET ' + this.publicKey + ':' +
+    options.headers['Authorization'] = 'BNET ' + this.auth.publicKey + ':' +
       signature.digest('base64')
   }
 

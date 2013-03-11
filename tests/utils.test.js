@@ -14,8 +14,7 @@ test('getKey', function(t) {
 
 test('wrap', function(t) {
   var obj =
-  { privateKey: 1
-  , publicKey: 1
+  { auth: { privateKey: 0, publicKey: 0 }
   , defaults: 1
   , _get: 1
   , key: 1
@@ -25,8 +24,7 @@ test('wrap', function(t) {
     , wrapped = utils.wrap(obj, wrapper)
 
   t.equal(wrapped.key, 2, 'got key with wrapper applied')
-  t.equal(wrapped.privateKey, 1, 'privateKey excluded from wrapper')
-  t.equal(wrapped.publicKey, 1, 'publicKey excluded from wrapper')
+  t.equal(wrapped.auth, obj.auth, 'auth excluded from wrapper')
   t.equal(wrapped.defaults, 1, 'defaults excluded from wrapper')
   t.equal(wrapped._get, 1, '_get excluded from wrapper')
 

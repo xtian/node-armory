@@ -10,8 +10,7 @@ exports.getKey = function (obj, key) {
 // Returns a new instance of the module with a wrapper applied.
 exports.wrap = function(target, wrapper) {
   var wrapped =
-  { privateKey: target.privateKey
-  , publicKey: target.publicKey
+  { auth: target.auth
   , defaults: target.defaults
   , _get: target._get
   }

@@ -41,7 +41,7 @@ test('should return Stream if no callback is passed', function(t) {
 })
 
 test('auth', function(t) {
-  armory.privateKey = armory.publicKey = 'test'
+  armory.auth.privateKey = armory.auth.publicKey = 'test'
 
   armory._get('/realm/status', options, function(err, body, res) {
     var time = new Date(res.req.getHeader('Date')).getTime()
