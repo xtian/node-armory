@@ -58,7 +58,7 @@ test('battlePetStats', function(t) {
     armory.battlePetStats(options, function(err, body, res) {
       t.notOk(err, 'no error returned')
 
-      t.similar(
+      t.equal(
         res.req.path
       , '/api/wow/battlePet/stats/258?breedId=5&level=25&qualityId=4'
       , 'built api url'
