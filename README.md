@@ -42,7 +42,7 @@ armory.arenaLadder({
 , battlegroup: 'vindication'
 , id: '2v2'
 }, function(err, teams) {
-    ...
+    …
 })
 ```
 
@@ -82,7 +82,7 @@ Retrieves an array of challenge mode leaderboard information for a region.
 Note: `challengeRegion` does not take an `id` option.
 
 ```js
-armory.challengeRegion({ region: 'us' }, function(err, res) { ... })
+armory.challengeRegion({ region: 'us' }, function(err, res) { … })
 ```
 
 ***
@@ -108,10 +108,10 @@ var armory = require('armory').defaults({
 , region: 'us'
 })
 
-armory.character(function(err, character) { ... })
-armory.character('Dewbaca', function(err, character) { ... })
+armory.character(function(err, character) { … })
+armory.character('Dewbaca', function(err, character) { … })
 
-armory.character({ name: 'Talent', realm: 'Lightbringer' }, function(err, character) { ... })
+armory.character({ name: 'Talent', realm: 'Lightbringer' }, function(err, character) { … })
 ```
 
 ***
@@ -139,7 +139,7 @@ Retrieves an object containing data about a spell.
 Retrieves an array containing the status of one or more realms.
 
 ```js
-armory.realmStatus({ region: 'us' }, function(err, realms) { ... })
+armory.realmStatus({ region: 'us' }, function(err, realms) { … })
 ```
 
 A single realm name or an array of realm names can be passed. If no names are provided, the status of all realms will be returned.
@@ -173,7 +173,7 @@ var armory = require('armory')
 armory.auth.publicKey = 'foo'
 armory.auth.privateKey = 'bar'
 
-armory.realmStatus(function() { ... })
+armory.realmStatus(function() { … })
 ```
 
 ### Notes on usage:
