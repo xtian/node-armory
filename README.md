@@ -36,13 +36,15 @@ Additional options:
 ### arenaLadder(options, callback)
 Retrieves an array of arena ladder information.
 
-    armory.arenaLadder({
-      region: 'us'
-    , battlegroup: 'vindication'
-    , id: '2v2'
-    }, function(err, teams) {
-        ...
-    })
+```js
+armory.arenaLadder({
+  region: 'us'
+, battlegroup: 'vindication'
+, id: '2v2'
+}, function(err, teams) {
+    ...
+})
+```
 
 Additional options:
 
@@ -79,7 +81,9 @@ Retrieves an array of challenge mode leaderboard information for a region.
 
 Note: `challengeRegion` does not take an `id` option.
 
-    armory.challengeRegion({ region: 'us' }, function(err, res) { ... })
+```js
+armory.challengeRegion({ region: 'us' }, function(err, res) { ... })
+```
 
 ***
 ### character(options, callback)
@@ -97,20 +101,18 @@ Additional options:
 ### defaults(options)
 Returns a new instance of the module where all options will default to the provided values. If the first argument of a method is a number or string, it will be used as the `id`|`name` option.
 
-    var armory = require('armory').defaults({
-      name: 'Dargonaut'
-    , realm: 'Shadowmoon'
-    , region: 'us'
-    })
+```js
+var armory = require('armory').defaults({
+  name: 'Dargonaut'
+, realm: 'Shadowmoon'
+, region: 'us'
+})
 
-    armory.character(function(err, character) { ... })
-    armory.character('Dewbaca', function(err, character) { ... })
+armory.character(function(err, character) { ... })
+armory.character('Dewbaca', function(err, character) { ... })
 
-    armory.character({
-      name: 'Talent'
-    , realm: 'Lightbringer'
-
-    }, function(err, character) { ... });
+armory.character({ name: 'Talent', realm: 'Lightbringer' }, function(err, character) { ... })
+```
 
 ***
 ### achievement(options, callback)
@@ -136,7 +138,9 @@ Retrieves an object containing data about a spell.
 ### realmStatus(options, callback)
 Retrieves an array containing the status of one or more realms.
 
-    armory.realmStatus({ region: 'us' }, function(err, realms) { ... );
+```js
+armory.realmStatus({ region: 'us' }, function(err, realms) { ... })
+```
 
 A single realm name or an array of realm names can be passed. If no names are provided, the status of all realms will be returned.
 
@@ -163,12 +167,14 @@ Note: `id` and `name` are not used by these methods.
 #### auth.publicKey, auth.privateKey
 Keys to use for generating an authorization header.
 
-    var armory = require('armory')
+```js
+var armory = require('armory')
 
-    armory.auth.publicKey = 'foo'
-    armory.auth.privateKey = 'bar'
+armory.auth.publicKey = 'foo'
+armory.auth.privateKey = 'bar'
 
-    armory.realmStatus(function() { ... })
+armory.realmStatus(function() { ... })
+```
 
 ### Notes on usage:
 
