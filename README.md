@@ -1,6 +1,6 @@
 # node-armory
 
-A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's [REST API for World of Warcraft](http://blizzard.github.com/api-wow-docs/).
+A simple [node.js](https://github.com/nodejs/node) wrapper around Blizzard's [REST API for World of Warcraft](https://dev.battle.net/io-docs).
 
 ## Installation
 
@@ -8,7 +8,7 @@ A simple [node.js](http://github.com/joyent/node) wrapper around Blizzard's [RES
 
 ## Documentation
 
-[WoW API Documenation](http://blizzard.github.com/api-wow-docs)
+[WoW API Documenation](https://dev.battle.net/io-docs)
 
 All methods take an options object and callback as arguments.
 
