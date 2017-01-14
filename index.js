@@ -44,12 +44,12 @@ armory._get = (path, options, callback) => {
 };
 
 // Retrieves object describing a battle pet.
-armory.battlePetStats = function(options, callback) {
+armory.battlePetStats = (options, callback) => {
   let path = `/pet/stats/${options.id}`;
 
   options._query = utils.pick(options, ['breedId', 'level', 'qualityId']);
 
-  return this._get(path, options, callback);
+  return armory._get(path, options, callback);
 };
 
 // Retrieves an array of challenge mode leaderboard information.
