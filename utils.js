@@ -48,17 +48,6 @@ exports.initParams = function(fn, context) {
   };
 };
 
-// Copies the keys of obj2 onto obj1 if they aren't present on obj1
-exports.merge = function(obj1, obj2) {
-  for (let prop in obj2) {
-    if (obj1[prop] == null) {
-      obj1[prop] = obj2[prop];
-    }
-  }
-
-  return obj1;
-};
-
 // Returns new object with specific keys copied from passed object
 exports.pick = function(obj, keys) {
   return keys.reduce(function(cumm, key) {

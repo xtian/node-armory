@@ -1,78 +1,78 @@
 const test = require('tap').test;
 const armory = require('../');
-
 const Stream = require('stream').Stream;
 
-test('battlePetAbility', (t) => {
-  let options = { id: 222, region: 'us' };
+require('dotenv').config();
+const defaults = { apiKey: process.env.ARMORY_API_KEY };
 
-  t.test('should build correct url and response', (t) => {
+test('battlePetAbility', (t) => {
+  let options = Object.assign(defaults, { id: 222, region: 'us' });
+
+  t.test('makes successful request', (t) => {
     armory.battlePetAbility(options, (err, body, res) => {
       t.notOk(err);
-      t.equal(res.req.path, '/api/wow/battlePet/ability/222');
       t.equal(res.statusCode, 200);
-      t.type(body, 'object');
+      t.equal(body.id, options.id);
       t.end();
     });
   });
 
-  t.test('should return a Stream if no callback is passed', (t) => {
+  t.test('returns a Stream if no callback is passed', (t) => {
     let res = armory.battlePetAbility(options);
 
     t.type(res, Stream);
     t.end();
   });
+
+  t.end();
 });
 
 test('battlePetSpecies', (t) => {
-  let options = { id: 444, region: 'us' };
+  let options = Object.assign(defaults, { id: 640, region: 'us' });
 
-  t.test('should build correct url and response', (t) => {
+  t.test('makes successful request', (t) => {
     armory.battlePetSpecies(options, (err, body, res) => {
       t.notOk(err);
-      t.equal(res.req.path, '/api/wow/battlePet/species/444');
       t.equal(res.statusCode, 200);
-      t.type(body, 'object');
+      t.equal(body.speciesId, options.id);
       t.end();
     });
   });
 
-  t.test('should return a Stream if no callback is passed', (t) => {
+  t.test('returns a Stream if no callback is passed', (t) => {
     let res = armory.battlePetSpecies(options);
 
     t.type(res, Stream);
     t.end();
   });
+
+  t.end();
 });
 
 test('battlePetStats', (t) => {
-  let options = {
+  let options = Object.assign(defaults, {
     id: 258,
     breedId: 5,
     level: 25,
     qualityId: 4,
     region: 'us'
-  };
+  });
 
-  t.test('should build correct url and response', (t) => {
+  t.test('makes successful request', (t) => {
     armory.battlePetStats(options, (err, body, res) => {
       t.notOk(err);
-
-      t.equal(
-        res.req.path,
-        '/api/wow/battlePet/stats/258?breedId=5&level=25&qualityId=4'
-      );
-
       t.equal(res.statusCode, 200);
-      t.type(body, 'object');
+      t.equal(body.speciesId, options.id);
       t.end();
     });
   });
 
-  t.test('should return a Stream if no callback is passed', (t) => {
+  t.test('returns a Stream if no callback is passed', (t) => {
     let res = armory.battlePetStats(options);
 
     t.type(res, Stream);
     t.end();
   });
+
+  t.end();
 });

@@ -4,15 +4,14 @@
   , "key": "files"
   }
 , { "method": "battlegroups"
-  , "url": "data/battlegroups"
+  , "url": "data/battlegroups/"
   , "key": "battlegroups"
-  , "trailingSlash": true
   }
 , { "method": "battlePetAbility"
-  , "url": "battlePet/ability"
+  , "url": "pet/ability"
   }
 , { "method": "battlePetSpecies"
-  , "url": "battlePet/species"
+  , "url": "pet/species"
   }
 , { "method": "challenge"
   , "key": "challenge"
