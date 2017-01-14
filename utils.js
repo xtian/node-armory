@@ -1,6 +1,6 @@
 // Returns the value of an object's key if it exists.
 exports.getKey = function(obj, key) {
-  if (obj && obj[key] != null) {
+  if (obj && obj[key]) {
     return obj[key];
   } else {
     return obj;
