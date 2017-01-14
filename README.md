@@ -1,5 +1,7 @@
 # node-armory
 
+[![Build Status](https://travis-ci.org/xtian/node-armory.svg?branch=master)](https://travis-ci.org/xtian/node-armory)
+
 A simple [node.js](https://github.com/nodejs/node) wrapper around Blizzard's [REST API for World of Warcraft](https://dev.battle.net/io-docs).
 
 ## Installation
