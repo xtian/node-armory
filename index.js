@@ -168,10 +168,6 @@ require('./methods').forEach(function(definition) {
     let path = `/${definition.url}${id}`;
     let cb;
 
-    if (definition.trailingSlash) {
-      path += '/';
-    }
-
     if (callback && definition.key) {
       cb = function(err, body, res) {
         let data = utils.getKey(body, definition.key);

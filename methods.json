@@ -4,9 +4,8 @@
   , "key": "files"
   }
 , { "method": "battlegroups"
-  , "url": "data/battlegroups"
+  , "url": "data/battlegroups/"
   , "key": "battlegroups"
-  , "trailingSlash": true
   }
 , { "method": "battlePetAbility"
   , "url": "pet/ability"

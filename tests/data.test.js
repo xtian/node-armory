@@ -1,11 +1,12 @@
 const test = require('tap').test;
 const armory = require('../');
-
 const Stream = require('stream').Stream;
 
-let options = { region: 'us' };
+require('dotenv').config();
+let options = { region: 'us', apiKey: process.env.ARMORY_API_KEY };
 
-['battlegroups',
+[
+  'battlegroups',
   'characterAchievements',
   'classes',
   'guildAchievements',
@@ -14,19 +15,20 @@ let options = { region: 'us' };
   'rewards'
 ].forEach((method) => {
 
-  test(`${method} should build correct url and output`, (t) => {
+  test(`${method} makes successful request`, (t) => {
     armory[method](options, (err, body, res) => {
       t.notOk(err);
-      t.type(body, Array);
       t.equal(res.statusCode, 200);
+      t.type(body, Array);
       t.end();
     });
   });
 
-  test(`${method} should return Stream if no callback is passed`, (t) => {
+  test(`${method} returns a Stream if no callback is passed`, (t) => {
     let res = armory[method](options);
 
     t.type(res, Stream);
     t.end();
   });
+
 });
