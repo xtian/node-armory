@@ -15,7 +15,7 @@
   "main": "index.js",
   "repository": "xtian/node-armory",
   "dependencies": {
-    "request": "~2"
+    "request": "^2.79.0"
   },
   "devDependencies": {
     "dotenv": "^4.0.0",
