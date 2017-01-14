@@ -6,7 +6,7 @@ A simple [node.js](https://github.com/nodejs/node) wrapper around Blizzard's [RE
 
 ## Installation
 
-    npm install armory
+    npm install --save armory
 
 ## Documentation
 
