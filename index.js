@@ -70,7 +70,7 @@ armory.arenaLadder = function(options, callback) {
 
 // Retrieves object describing a battle pet.
 armory.battlePetStats = function(options, callback) {
-  let path = `/battlePet/stats/${options.id}`;
+  let path = `/pet/stats/${options.id}`;
 
   options._query = utils.pick(options, ['breedId', 'level', 'qualityId']);
 

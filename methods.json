@@ -9,10 +9,10 @@
   , "trailingSlash": true
   }
 , { "method": "battlePetAbility"
-  , "url": "battlePet/ability"
+  , "url": "pet/ability"
   }
 , { "method": "battlePetSpecies"
-  , "url": "battlePet/species"
+  , "url": "pet/species"
   }
 , { "method": "challenge"
   , "key": "challenge"
