@@ -20,6 +20,7 @@ If no callback is provided, a Stream will be returned.
 
 Except for the static APIs, all options objects can have the following properties:
 
+* `apiKey`
 * `name`|`id`
 * `region`
 * `locale` _(optional)_
@@ -108,20 +109,6 @@ Retrieves a static array of data about character races.
 Retrieves a static array of data about guild rewards.
 
 Note: `id` and `name` are not used by these methods.
-
-***
-### Properties
-#### auth.publicKey, auth.privateKey
-Keys to use for generating an authorization header.
-
-```js
-var armory = require('armory')
-
-armory.auth.publicKey = 'foo'
-armory.auth.privateKey = 'bar'
-
-armory.realmStatus(function() { … })
-```
 
 ### Notes on usage:
 
