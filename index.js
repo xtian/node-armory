@@ -5,7 +5,7 @@ const utils = require('./utils');
 const armory = {};
 
 // Makes the request.
-armory._get = function(path, options, callback) {
+armory._get = (path, options, callback) => {
   if (!options.apiKey) {
     throw new Error('apiKey must be provided');
   }
@@ -31,7 +31,7 @@ armory._get = function(path, options, callback) {
   let cb;
 
   if (callback) {
-    cb = function(err, res, body) {
+    cb = (err, res, body) => {
       if (res.statusCode > 399 && body) {
         err = err || new Error(body.detail);
       }
@@ -53,13 +53,13 @@ armory.battlePetStats = function(options, callback) {
 };
 
 // Retrieves an array of challenge mode leaderboard information.
-armory.challengeRegion = function(options, ...args) {
+armory.challengeRegion = (options, ...args) => {
   options.id = 'region';
-  return this.challenge(options, ...args);
+  return armory.challenge(options, ...args);
 };
 
 // Retrieves array of realm status information.
-armory.realmStatus = function(options, callback) {
+armory.realmStatus = (options, callback) => {
   let path = '/realm/status';
   let cb;
 
@@ -68,18 +68,18 @@ armory.realmStatus = function(options, callback) {
   }
 
   if (callback) {
-    cb = function(err, body, res) {
+    cb = (err, body, res) => {
       let data = utils.getKey(body, 'realms');
-      callback.call(this, err, data, res);
+      callback(err, data, res);
     };
   }
 
-  return this._get(path, options, cb);
+  return armory._get(path, options, cb);
 };
 
 // Retrieves an object describing a character or guild.
-['character', 'guild'].forEach(function(method) {
-  armory[method] = function(options, callback) {
+['character', 'guild'].forEach((method) => {
+  armory[method] = (options, callback) => {
     if (options.fields) {
       options._query.fields = options.fields;
     }
@@ -90,29 +90,29 @@ armory.realmStatus = function(options, callback) {
     }
 
     let path = `/${method}/${options.realm}/${options.id}`;
-    return this._get(path, options, callback);
+    return armory._get(path, options, callback);
   };
 });
 
 // Definitions for generic functions.
-require('./methods').forEach(function(definition) {
+require('./methods').forEach((definition) => {
   definition.url = definition.url || definition.method;
 
-  armory[definition.method] = function(options, callback) {
+  armory[definition.method] = (options, callback) => {
     let id = options.id ? `/${options.id}` : '';
     let path = `/${definition.url}${id}`;
     let cb;
 
     if (callback && definition.key) {
-      cb = function(err, body, res) {
+      cb = (err, body, res) => {
         let data = utils.getKey(body, definition.key);
-        callback.call(this, err, data, res);
+        callback(err, data, res);
       };
     } else {
       cb = callback;
     }
 
-    return this._get(path, options, cb);
+    return armory._get(path, options, cb);
   };
 });
 
