@@ -6,13 +6,6 @@ const armory = {};
 
 // Makes the request.
 armory._get = function(path, options, callback) {
-  options.jar = false;
-  options.json = true;
-
-  if (options.locale) {
-    options._query.locale = options.locale;
-  }
-
   if (!options.apiKey) {
     throw new Error('apiKey must be provided');
   }
@@ -21,8 +14,13 @@ armory._get = function(path, options, callback) {
     throw new Error('region must be provided');
   }
 
-  options._query.apikey = options.apiKey
+  if (options.locale) {
+    options._query.locale = options.locale;
+  }
 
+  options.jar = false;
+  options.json = true;
+  options._query.apikey = options.apiKey;
   options.uri = url.format({
     protocol: 'https:',
     hostname: `${options.region}.api.battle.net`,
@@ -34,11 +32,11 @@ armory._get = function(path, options, callback) {
 
   if (callback) {
     cb = function(err, res, body) {
-      if (body && body.status === 'nok') {
-        err = err || new Error(body.reason);
+      if (res.statusCode > 399 && body) {
+        err = err || new Error(body.detail);
       }
 
-      callback.call(this, err, body, res);
+      callback(err, body, res);
     };
   }
 
