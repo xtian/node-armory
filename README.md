@@ -14,8 +14,6 @@ A simple [node.js](https://github.com/nodejs/node) wrapper around Blizzard's [RE
 
 All methods take an options object and callback as arguments.
 
-If a string or number is passed instead of an options object, that value will be used as `options.id`. The rest of a method's required options can be provided using the `defaults` method.
-
 If no callback is provided, a Stream will be returned.
 
 Except for the static APIs, all options objects can have the following properties:
