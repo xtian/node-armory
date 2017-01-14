@@ -14,7 +14,10 @@
   { "jshint": "~1"
   , "tap": "~0.4"
   }
-, "scripts": { "test": "make test" }
+, "scripts":
+  { "test": "tap tests"
+  , "lint": "jshint --config=.jshintrc index.js utils.js ./tests/"
+  }
 , "license": "MIT"
 , "engines": ["node >= 0.4.0"]
 }
