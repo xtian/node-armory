@@ -27,44 +27,6 @@ Except for the static APIs, all options objects can have the following propertie
 Note: `name` and `id` are interchangeable, and `locale` does not affect all API methods.
 
 ***
-### arena(options, callback)
-Retrieves an object containing data about an arena team.
-
-Additional options:
-
-* `realm`
-* `size`
-
-### arenaLadder(options, callback)
-Retrieves an array of arena ladder information.
-
-```js
-armory.arenaLadder({
-  region: 'us'
-, battlegroup: 'vindication'
-, id: '2v2'
-}, function(err, teams) {
-    …
-})
-```
-
-Additional options:
-
-* `asc`
-* `battlegroup`
-* `page`
-* `size`
-
-### rbgLadder(options, callback)
-Retrieves an array of rated battleground ladder information.
-
-Additional options:
-
-* `asc`
-* `page`
-* `size`
-
-***
 ### battlePetStats(options, callback)
 Retrieves object describing a battle pet.
 

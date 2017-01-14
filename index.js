@@ -45,29 +45,6 @@ armory._get = function(path, options, callback) {
   return request(options, cb);
 };
 
-// Retrieves an object describing an arena team.
-armory.arena = function(options, callback) {
-  let path = `/arena/${options.realm}/${options.size}/${options.id}`;
-  return this._get(path, options, callback);
-};
-
-// Retrieves an array of arena ladder information.
-armory.arenaLadder = function(options, callback) {
-  let path = `/pvp/arena/${options.battlegroup}/${options.id}`;
-  let cb;
-
-  options._query = utils.pick(options, ['asc', 'page', 'size']);
-
-  if (callback) {
-    cb = function(err, body, res) {
-      let data = utils.getKey(body, 'arenateam');
-      callback.call(this, err, data, res);
-    };
-  }
-
-  return this._get(path, options, cb);
-};
-
 // Retrieves object describing a battle pet.
 armory.battlePetStats = function(options, callback) {
   let path = `/pet/stats/${options.id}`;
@@ -104,23 +81,6 @@ armory.defaults = function(defaults) {
   });
 
   return wrapped;
-};
-
-// Retrieves an array of rated battleground ladder information.
-armory.rbgLadder = function(options, callback) {
-  let path = '/pvp/ratedbg/ladder';
-  let cb;
-
-  options._query = utils.pick(options, ['asc', 'page', 'size']);
-
-  if (callback) {
-    cb = function(err, body, res) {
-      let data = utils.getKey(body, 'bgRecord');
-      callback.call(this, err, data, res);
-    };
-  }
-
-  return this._get(path, options, cb);
 };
 
 // Retrieves array of realm status information.
