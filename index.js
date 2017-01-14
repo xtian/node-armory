@@ -1,43 +1,34 @@
 const request = require('request');
-const crypto = require('crypto');
 const url = require('url');
 const utils = require('./utils');
 
-const armory = { auth: { privateKey: null, publicKey: null } };
+const armory = {};
 
 // Makes the request.
 armory._get = function(path, options, callback) {
-  options.headers = options.headers || {};
   options.jar = false;
   options.json = true;
 
-  path = encodeURI(`/api/wow${path}`);
-
   if (options.locale) {
     options._query.locale = options.locale;
+  }
+
+  if (!options.apiKey) {
+    throw new Error('apiKey must be provided');
   }
 
   if (!options.region) {
     throw new Error('region must be provided');
   }
 
+  options._query.apikey = options.apiKey
+
   options.uri = url.format({
-    protocol: 'http:',
-    hostname: `${options.region}.battle.net`,
-    pathname: path,
+    protocol: 'https:',
+    hostname: `${options.region}.api.battle.net`,
+    pathname: encodeURI(`/wow${path}`),
     query: options._query
   });
-
-  // Authentication
-  if (this.auth.privateKey && this.auth.publicKey) {
-    let signature = crypto.createHmac('sha1', this.auth.privateKey);
-    let date = new Date().toUTCString();
-
-    signature.update(`GET\n${date}\n${path}\n`);
-
-    options.headers.Date = date;
-    options.headers.Authorization = `BNET ${this.auth.publicKey}:${signature.digest('base64')}`;
-  }
 
   let cb;
 
