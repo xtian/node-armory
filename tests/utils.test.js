@@ -88,17 +88,6 @@ test('initParams', (t) => {
   t.end();
 });
 
-test('merge', (t) => {
-  let obj1 = { one: 1, two: null };
-  let obj2 = { one: 11, two: 2, three: 3 };
-  let merged = utils.merge(obj1, obj2);
-
-  t.equal(merged.one, 1, 'present value was not overwritten');
-  t.equal(merged.two, 2, 'null value was overwritten');
-  t.equal(merged.three, 3, 'undefined property was set');
-  t.end();
-});
-
 test('pick', (t) => {
   let obj = { one: 1, two: 2, three: 3 };
   let picked = utils.pick(obj, ['one', 'three']);

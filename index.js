@@ -60,29 +60,6 @@ armory.challengeRegion = function(options, ...args) {
   return this.challenge(options, ...args);
 };
 
-// Returns wrapped module where every method has default options applied
-armory.defaults = function(defaults) {
-  defaults.id = defaults.id || defaults.name;
-  delete defaults.name;
-
-  let wrapped = utils.wrap(this, function(fn, context) {
-    return function(options, callback) {
-      if (options.toString() === '[object Object]') {
-        options = utils.merge(options, defaults);
-        return fn.call(context, options, callback);
-      }
-
-      return utils.initParams(function(options, callback) {
-        options = utils.merge(options, defaults);
-        return fn.call(context, options, callback);
-
-      }, context)(options, callback);
-    };
-  });
-
-  return wrapped;
-};
-
 // Retrieves array of realm status information.
 armory.realmStatus = function(options, callback) {
   let path = '/realm/status';

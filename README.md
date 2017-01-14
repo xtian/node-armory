@@ -62,23 +62,6 @@ Additional options:
 * `realm`
 
 ***
-### defaults(options)
-Returns a new instance of the module where all options will default to the provided values. If the first argument of a method is a number or string, it will be used as the `id`|`name` option.
-
-```js
-var armory = require('armory').defaults({
-  name: 'Dargonaut'
-, realm: 'Shadowmoon'
-, region: 'us'
-})
-
-armory.character(function(err, character) { … })
-armory.character('Dewbaca', function(err, character) { … })
-
-armory.character({ name: 'Talent', realm: 'Lightbringer' }, function(err, character) { … })
-```
-
-***
 ### achievement(options, callback)
 Retrieves an object containing data about an achievement.
 ### auction(options, callback)
