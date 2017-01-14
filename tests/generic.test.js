@@ -1,193 +1,193 @@
-var test = require('tap').test
-  , armory = require('../')
+const test = require('tap').test;
+const armory = require('../');
 
-var Stream = require('stream').Stream
+const Stream = require('stream').Stream;
 
-test('achievement', function(t) {
-  var options = { id: 1705, region: 'us' }
+test('achievement', (t) => {
+  let options = { id: 1705, region: 'us' };
 
-  t.test('should build correct url and response', function(t) {
-    armory.achievement(options, function(err, body, res) {
-      t.notOk(err, 'no error returned')
-      t.equal(res.req.path, '/api/wow/achievement/1705', 'built api url')
-      t.equal(res.statusCode, 200, 'returned 200')
-      t.type(body, 'object', 'returned an object')
-      t.end()
-    })
-  })
+  t.test('should build correct url and response', (t) => {
+    armory.achievement(options, (err, body, res) => {
+      t.notOk(err);
+      t.equal(res.req.path, '/api/wow/achievement/1705');
+      t.equal(res.statusCode, 200);
+      t.type(body, 'object');
+      t.end();
+    });
+  });
 
-  t.test('should return a Stream if no callback is passed', function(t) {
-    var res = armory.achievement(options)
+  t.test('should return a Stream if no callback is passed', (t) => {
+    let res = armory.achievement(options);
 
-    t.type(res, Stream)
-    t.end()
-  })
-})
+    t.type(res, Stream);
+    t.end();
+  });
+});
 
-test('auction', function(t) {
-  var options = { id: 'shadowmoon', region: 'us' }
+test('auction', (t) => {
+  let options = { id: 'shadowmoon', region: 'us' };
 
-  t.test('should build correct url and response', function(t) {
-    armory.auction(options, function(err, body, res) {
-      t.notOk(err, 'no error returned')
-      t.equal(res.req.path, '/api/wow/auction/data/shadowmoon', 'built api url')
-      t.equal(res.statusCode, 200, 'returned 200')
-      t.type(body, Array, 'returned an array')
-      t.end()
-    })
-  })
+  t.test('should build correct url and response', (t) => {
+    armory.auction(options, (err, body, res) => {
+      t.notOk(err);
+      t.equal(res.req.path, '/api/wow/auction/data/shadowmoon');
+      t.equal(res.statusCode, 200);
+      t.type(body, Array);
+      t.end();
+    });
+  });
 
-  t.test('should return a Stream if no callback is passed', function(t) {
-    var res = armory.auction(options)
+  t.test('should return a Stream if no callback is passed', (t) => {
+    let res = armory.auction(options);
 
-    t.type(res, Stream)
-    t.end()
-  })
-})
+    t.type(res, Stream);
+    t.end();
+  });
+});
 
-test('challenge', function(t) {
-  var options = { id: 'shadowmoon', region: 'us' }
+test('challenge', (t) => {
+  let options = { id: 'shadowmoon', region: 'us' };
 
-  t.test('should build correct url and response', function(t) {
-    armory.challenge(options, function(err, body, res) {
-      t.notOk(err, 'no error returned')
-      t.equal(res.req.path, '/api/wow/challenge/shadowmoon', 'built api url')
-      t.equal(res.statusCode, 200, 'returned 200')
-      t.type(body, Array, 'returned an array')
-      t.end()
-    })
-  })
+  t.test('should build correct url and response', (t) => {
+    armory.challenge(options, (err, body, res) => {
+      t.notOk(err);
+      t.equal(res.req.path, '/api/wow/challenge/shadowmoon');
+      t.equal(res.statusCode, 200);
+      t.type(body, Array);
+      t.end();
+    });
+  });
 
-  t.test('should return a Stream if no callback is passed', function(t) {
-    var res = armory.challenge(options)
+  t.test('should return a Stream if no callback is passed', (t) => {
+    let res = armory.challenge(options);
 
-    t.type(res, Stream)
-    t.end()
-  })
-})
+    t.type(res, Stream);
+    t.end();
+  });
+});
 
-test('challengeRegion', function(t) {
-  var options = { region: 'us' }
+test('challengeRegion', (t) => {
+  let options = { region: 'us' };
 
-  t.test('should build correct url and response', function(t) {
-    armory.challengeRegion(options, function(err, body, res) {
-      t.notOk(err, 'no error returned')
-      t.equal(res.req.path, '/api/wow/challenge/region', 'built api url')
-      t.equal(res.statusCode, 200, 'returned 200')
-      t.type(body, Array, 'returned an array')
-      t.end()
-    })
-  })
+  t.test('should build correct url and response', (t) => {
+    armory.challengeRegion(options, (err, body, res) => {
+      t.notOk(err);
+      t.equal(res.req.path, '/api/wow/challenge/region');
+      t.equal(res.statusCode, 200);
+      t.type(body, Array);
+      t.end();
+    });
+  });
 
-  t.test('should return a Stream if no callback is passed', function(t) {
-    var res = armory.challengeRegion(options)
+  t.test('should return a Stream if no callback is passed', (t) => {
+    let res = armory.challengeRegion(options);
 
-    t.type(res, Stream)
-    t.end()
-  })
-})
+    t.type(res, Stream);
+    t.end();
+  });
+});
 
-test('item', function(t) {
-  var options = { id: 28041, region: 'us' }
+test('item', (t) => {
+  let options = { id: 28041, region: 'us' };
 
-  t.test('should build correct url and response', function(t) {
-    armory.item(options, function(err, body, res) {
-      t.notOk(err, 'no error returned')
-      t.equal(res.req.path, '/api/wow/item/28041', 'built api url')
-      t.equal(res.statusCode, 200, 'returned 200')
-      t.type(body, 'object', 'returned an object')
-      t.end()
-    })
-  })
+  t.test('should build correct url and response', (t) => {
+    armory.item(options, (err, body, res) => {
+      t.notOk(err);
+      t.equal(res.req.path, '/api/wow/item/28041');
+      t.equal(res.statusCode, 200);
+      t.type(body, 'object');
+      t.end();
+    });
+  });
 
-  t.test('should return a Stream if no callback is passed', function(t) {
-    var res = armory.item(options)
+  t.test('should return a Stream if no callback is passed', (t) => {
+    let res = armory.item(options);
 
-    t.type(res, Stream)
-    t.end()
-  })
-})
+    t.type(res, Stream);
+    t.end();
+  });
+});
 
-test('itemSet', function(t) {
-  var options = { id: 650, region: 'us' }
+test('itemSet', (t) => {
+  let options = { id: 650, region: 'us' };
 
-  t.test('should build correct url and response', function(t) {
-    armory.itemSet(options, function(err, body, res) {
-      t.notOk(err, 'no error returned')
-      t.equal(res.req.path, '/api/wow/item/set/650', 'built api url')
-      t.equal(res.statusCode, 200, 'returned 200')
-      t.type(body, 'object', 'returned an object')
-      t.end()
-    })
-  })
+  t.test('should build correct url and response', (t) => {
+    armory.itemSet(options, (err, body, res) => {
+      t.notOk(err);
+      t.equal(res.req.path, '/api/wow/item/set/650');
+      t.equal(res.statusCode, 200);
+      t.type(body, 'object');
+      t.end();
+    });
+  });
 
-  t.test('should return a Stream if no callback is passed', function(t) {
-    var res = armory.itemSet(options)
+  t.test('should return a Stream if no callback is passed', (t) => {
+    let res = armory.itemSet(options);
 
-    t.type(res, Stream)
-    t.end()
-  })
-})
+    t.type(res, Stream);
+    t.end();
+  });
+});
 
-test('quest', function(t) {
-  var options = { id: 11549, region: 'us' }
+test('quest', (t) => {
+  let options = { id: 11549, region: 'us' };
 
-  t.test('should build correct url and response', function(t) {
-    armory.quest(options, function(err, body, res) {
-      t.notOk(err, 'no error returned')
-      t.equal(res.req.path, '/api/wow/quest/11549', 'built api url')
-      t.equal(res.statusCode, 200, 'returned 200')
-      t.type(body, 'object', 'returned an object')
-      t.end()
-    })
-  })
+  t.test('should build correct url and response', (t) => {
+    armory.quest(options, (err, body, res) => {
+      t.notOk(err);
+      t.equal(res.req.path, '/api/wow/quest/11549');
+      t.equal(res.statusCode, 200);
+      t.type(body, 'object');
+      t.end();
+    });
+  });
 
-  t.test('should return a Stream if no callback is passed', function(t) {
-    var res = armory.quest(options)
+  t.test('should return a Stream if no callback is passed', (t) => {
+    let res = armory.quest(options);
 
-    t.type(res, Stream)
-    t.end()
-  })
-})
+    t.type(res, Stream);
+    t.end();
+  });
+});
 
-test('recipe', function(t) {
-  var options = { id: 33288, region: 'us' }
+test('recipe', (t) => {
+  let options = { id: 33288, region: 'us' };
 
-  t.test('should build correct url and response', function(t) {
-    armory.recipe(options, function(err, body, res) {
-      t.notOk(err, 'no error returned')
-      t.equal(res.req.path, '/api/wow/recipe/33288', 'built api url')
-      t.equal(res.statusCode, 200, 'returned 200')
-      t.type(body, 'object', 'returned an object')
-      t.end()
-    })
-  })
+  t.test('should build correct url and response', (t) => {
+    armory.recipe(options, (err, body, res) => {
+      t.notOk(err);
+      t.equal(res.req.path, '/api/wow/recipe/33288');
+      t.equal(res.statusCode, 200);
+      t.type(body, 'object');
+      t.end();
+    });
+  });
 
-  t.test('should return a Stream if no callback is passed', function(t) {
-    var res = armory.recipe(options)
+  t.test('should return a Stream if no callback is passed', (t) => {
+    let res = armory.recipe(options);
 
-    t.type(res, Stream)
-    t.end()
-  })
-})
+    t.type(res, Stream);
+    t.end();
+  });
+});
 
-test('spell', function(t) {
-  var options = { id: 6197, region: 'us' }
+test('spell', (t) => {
+  let options = { id: 6197, region: 'us' };
 
-  t.test('should build correct url and response', function(t) {
-    armory.spell(options, function(err, body, res) {
-      t.notOk(err, 'no error returned')
-      t.equal(res.req.path, '/api/wow/spell/6197', 'built api url')
-      t.equal(res.statusCode, 200, 'returned 200')
-      t.type(body, 'object', 'returned an object')
-      t.end()
-    })
-  })
+  t.test('should build correct url and response', (t) => {
+    armory.spell(options, (err, body, res) => {
+      t.notOk(err);
+      t.equal(res.req.path, '/api/wow/spell/6197');
+      t.equal(res.statusCode, 200);
+      t.type(body, 'object');
+      t.end();
+    });
+  });
 
-  t.test('should return a Stream if no callback is passed', function(t) {
-    var res = armory.spell(options)
+  t.test('should return a Stream if no callback is passed', (t) => {
+    let res = armory.spell(options);
 
-    t.type(res, Stream)
-    t.end()
-  })
-})
+    t.type(res, Stream);
+    t.end();
+  });
+});

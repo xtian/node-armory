@@ -1,32 +1,32 @@
-var test = require('tap').test
-  , armory = require('../')
+const test = require('tap').test;
+const armory = require('../');
 
-var Stream = require('stream').Stream
+const Stream = require('stream').Stream;
 
-var options = { region: 'us' }
+let options = { region: 'us' };
 
-;['battlegroups'
-, 'characterAchievements'
-, 'classes'
-, 'guildAchievements'
-, 'perks'
-, 'races'
-, 'rewards'
-].forEach(function(method) {
+['battlegroups',
+  'characterAchievements',
+  'classes',
+  'guildAchievements',
+  'perks',
+  'races',
+  'rewards'
+].forEach((method) => {
 
-  test(method + ' should build correct url and output', function(t) {
-    armory[method](options, function(err, body, res) {
-      t.notOk(err, 'no error returned')
-      t.type(body, Array, 'returned an array')
-      t.equal(res.statusCode, 200, 'returned 200')
-      t.end()
-    })
-  })
+  test(`${method} should build correct url and output`, (t) => {
+    armory[method](options, (err, body, res) => {
+      t.notOk(err);
+      t.type(body, Array);
+      t.equal(res.statusCode, 200);
+      t.end();
+    });
+  });
 
-  test(method + ' should return Stream if no callback is passed', function(t) {
-    var res = armory[method](options)
+  test(`${method} should return Stream if no callback is passed`, (t) => {
+    let res = armory[method](options);
 
-    t.type(res, Stream, 'returned a Stream')
-    t.end()
-  })
-})
+    t.type(res, Stream);
+    t.end();
+  });
+});
