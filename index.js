@@ -53,9 +53,9 @@ armory.battlePetStats = (options, callback) => {
 };
 
 // Retrieves an array of challenge mode leaderboard information.
-armory.challengeRegion = (options, ...args) => {
+armory.challengeRegion = (options, callback) => {
   options.id = 'region';
-  return armory.challenge(options, ...args);
+  return armory.challenge(options, callback);
 };
 
 // Retrieves array of realm status information.
