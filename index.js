@@ -101,15 +101,13 @@ require('./methods').forEach((definition) => {
   armory[definition.method] = (options, callback) => {
     let id = options.id ? `/${options.id}` : '';
     let path = `/${definition.url}${id}`;
-    let cb;
+    let cb = callback;
 
     if (callback && definition.key) {
       cb = (err, body, res) => {
         let data = utils.getKey(body, definition.key);
         callback(err, data, res);
       };
-    } else {
-      cb = callback;
     }
 
     return armory._get(path, options, cb);
