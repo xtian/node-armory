@@ -13,22 +13,11 @@ test('getKey', (t) => {
 });
 
 test('wrap', (t) => {
-  let obj = {
-    auth: { privateKey: 0, publicKey: 0 },
-    defaults: 1,
-    _get: 1,
-    key: 1
-  };
-
-  let wrapper = function(val) {
-    return val + 1;
-  };
-
+  let obj = { _get: 1, key: 1 };
+  let wrapper = (val) => val + 1;
   let wrapped = utils.wrap(obj, wrapper);
 
   t.equal(wrapped.key, 2, 'got key with wrapper applied');
-  t.equal(wrapped.auth, obj.auth, 'auth excluded from wrapper');
-  t.equal(wrapped.defaults, 1, 'defaults excluded from wrapper');
   t.equal(wrapped._get, 1, '_get excluded from wrapper');
 
   t.end();
@@ -37,51 +26,21 @@ test('wrap', (t) => {
 test('initParams', (t) => {
   t.type(utils.initParams(), 'function', 'returned wrapped function');
 
-  t.test('should initialize options object if callback passed', (t) => {
-    let fn = utils.initParams(function(options) {
-      t.type(options, 'object', 'options was initialized');
-      t.type(options.headers, 'object', 'headers was initialized');
+  t.test('should initialize options', (t) => {
+    let fn = utils.initParams((options) => {
       t.type(options._query, 'object', '_query was initialized');
     });
 
-    fn(function() {});
-    t.end();
-  });
-
-  t.test('should set the id prop if options object not passed', (t) => {
-    let fn = utils.initParams(function(options) {
-      t.equal(options.id, 1, 'id property was set to passed number param');
-    });
-
-    fn(1);
-    t.end();
-  });
-
-  t.test('should set the id prop if array passed', (t) => {
-    let fn = utils.initParams(function(options) {
-      t.deepEqual(options.id, [1], 'id property was set to passed array param');
-    });
-
-    fn([1]);
+    fn({});
     t.end();
   });
 
   t.test('should copy name prop to id prop', (t) => {
-    let fn = utils.initParams(function(options) {
-      t.equal(options.id, 1, 'id was set to value of name property');
+    let fn = utils.initParams((options) => {
+      t.equal(options.id, 1);
     });
 
     fn({ name: 1 });
-    t.end();
-  });
-
-  t.test('should call function with the passed context', (t) => {
-    let self = {};
-    let fn = utils.initParams(function() {
-      t.equal(this, self, 'this value was equal to passed context param');
-    }, self);
-
-    fn({});
     t.end();
   });
 
@@ -90,10 +49,9 @@ test('initParams', (t) => {
 
 test('pick', (t) => {
   let obj = { one: 1, two: 2, three: 3 };
-  let picked = utils.pick(obj, ['one', 'three']);
+  let picked = utils.pick(obj, ['one']);
 
-  t.equal(picked.one, 1, '"one" was copied to new object');
-  t.equal(picked.two, undefined, '"two" was not copied to new object');
-  t.equal(picked.three, 3, '"three" was copied to new object');
+  t.equal(picked.one, 1);
+  t.equal(picked.two, undefined);
   t.end();
 });

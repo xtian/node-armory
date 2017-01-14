@@ -1,5 +1,5 @@
 // Returns the value of an object's key if it exists.
-exports.getKey = function(obj, key) {
+exports.getKey = (obj, key) => {
   if (obj && obj[key]) {
     return obj[key];
   } else {
@@ -8,16 +8,12 @@ exports.getKey = function(obj, key) {
 };
 
 // Returns a new instance of the module with a wrapper applied.
-exports.wrap = function(target, wrapper) {
-  let wrapped = {
-    auth: target.auth,
-    defaults: target.defaults,
-    _get: target._get
-  };
+exports.wrap = (target, wrapper) => {
+  let wrapped = { _get: target._get };
 
   for (let prop in target) {
     if (wrapped[prop] === undefined) {
-      wrapped[prop] = wrapper(target[prop], target);
+      wrapped[prop] = wrapper(target[prop]);
     }
   }
 
@@ -25,33 +21,19 @@ exports.wrap = function(target, wrapper) {
 };
 
 // A wrapper to initialize the options object.
-exports.initParams = function(fn, context) {
-  return function(options, callback) {
-    let newOptions = {};
+exports.initParams = (fn) => {
+  return (options, callback) => {
+    options.id = options.id || options.name;
+    options._query = {};
 
-    if (typeof options === 'object' && !Array.isArray(options)) {
-      newOptions = options;
-      newOptions.id = options.id || options.name;
-
-    } else if (typeof options === 'function') {
-      callback = options;
-      newOptions = {};
-
-    } else {
-      newOptions.id = options;
-    }
-
-    newOptions.headers = newOptions.headers || {};
-    newOptions._query = {};
-
-    return fn.call(context, newOptions, callback);
+    return fn(options, callback);
   };
 };
 
 // Returns new object with specific keys copied from passed object
-exports.pick = function(obj, keys) {
-  return keys.reduce(function(cumm, key) {
-    cumm[key] = obj[key];
-    return cumm;
+exports.pick = (obj, keys) => {
+  return keys.reduce((acc, key) => {
+    acc[key] = obj[key];
+    return acc;
   }, {});
 };
