@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:ember-suave/base",
+    "plugin:node/recommended"
+  ],
+  "plugins": [
+    "ember-suave",
+    "node"
+  ],
+  "rules": {
+    "arrow-parens": ["error", "always"],
+    "no-var": "error",
+    "object-shorthand": ["error", "always"],
+    "prefer-spread": "error",
+    "prefer-template": "error"
+  }
+}
